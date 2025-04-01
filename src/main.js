@@ -1223,8 +1223,8 @@ const config = {
         width: 1280, // Fixed base width
         height: 720, // Fixed base height
         min: {
-            width: 800,
-            height: 600
+            width: 640,  // Reduced from 800
+            height: 360  // Reduced from 600
         },
         max: {
             width: 1280,
