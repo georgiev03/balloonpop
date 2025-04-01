@@ -20,13 +20,13 @@ class BootScene extends Phaser.Scene {
         this.load.image('balloon', 'assets/balloon.png');
         this.load.image('arrow', 'assets/arrow.svg');
         this.load.image('heart', 'assets/heart.png');
-        this.load.image('brokenheart', 'assets/brokenheart.png');
+        this.load.image('heart-empty', 'assets/heart-empty.png');
         this.load.image('startscreen', 'assets/startscreen.jpg');
         this.load.audio('pop', 'assets/pop.mp3');
         this.load.audio('success', 'assets/success.mp3');
         this.load.audio('win', 'assets/win.mp3');
         // Load words from JSON file
-        this.load.json('wordList', 'src/words.json');
+        this.load.json('wordList', 'assets/words.json');
 
         // Add load complete handler
         this.load.on('complete', () => {
@@ -46,7 +46,7 @@ class BootScene extends Phaser.Scene {
         console.log('BootScene create called');
         // Verify textures are loaded
         console.log('Heart texture exists:', this.textures.exists('heart'));
-        console.log('Broken heart texture exists:', this.textures.exists('brokenheart'));
+        console.log('Heart empty texture exists:', this.textures.exists('heart-empty'));
     }
 }
 
@@ -635,7 +635,7 @@ class GameScene extends Phaser.Scene {
         
         if (this.healthIcons[this.lives]) {
             const icon = this.healthIcons[this.lives];
-            icon.setTexture('brokenheart');
+            icon.setTexture('heart-empty');
             icon.setAlpha(0.3);
             
             this.tweens.add({
