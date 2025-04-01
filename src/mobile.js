@@ -1,5 +1,9 @@
 import { mobileConfig, mobileUI, mobileGame, mobileScenes } from './mobile-config.js';
 import { BootScene, MainMenuScene, GameScene, GameOverScene, WinScene } from './main.js';
+import OrientationHandler from './orientation-handler.js';
+
+// Initialize orientation handler
+const orientationHandler = new OrientationHandler('game-container');
 
 // Initialize game with proper scaling
 const game = new Phaser.Game({
@@ -12,40 +16,19 @@ const game = new Phaser.Game({
     }
 });
 
-// Handle orientation changes and fullscreen
-function handleOrientation() {
-    const isLandscape = window.innerWidth > window.innerHeight;
-    const rotatePrompt = document.getElementById('rotate-prompt');
-    const gameContainer = document.getElementById('game-container');
-
-    if (isLandscape) {
-        rotatePrompt.style.display = 'none';
-        if (!document.fullscreenElement && gameContainer.requestFullscreen) {
-            gameContainer.requestFullscreen().catch(err => {
-                console.log('Fullscreen request failed:', err);
-            });
-        }
-    } else {
-        rotatePrompt.style.display = 'block';
-        if (document.fullscreenElement) {
-            document.exitFullscreen();
-        }
-    }
-
-    // Update game size
-    game.scale.resize(window.innerWidth, window.innerHeight);
-}
-
-// Add event listeners
-window.addEventListener('load', () => {
-    handleOrientation();
-    window.addEventListener('orientationchange', () => {
-        // Small delay to allow orientation change to complete
-        setTimeout(handleOrientation, 100);
-    });
-    window.addEventListener('resize', () => {
+// Listen for fullscreen changes from orientation handler
+window.addEventListener('fullscreenchange', (event) => {
+    if (event.detail.isFullscreen) {
+        // Update game size for fullscreen
         game.scale.resize(window.innerWidth, window.innerHeight);
-    });
+    }
+});
+
+// Add event listeners for game resizing
+window.addEventListener('resize', () => {
+    if (game) {
+        game.scale.resize(window.innerWidth, window.innerHeight);
+    }
 });
 
 // Prevent default touch behaviors
