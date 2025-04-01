@@ -5,11 +5,11 @@ export const mobileConfig = {
         mode: Phaser.Scale.FIT,
         parent: 'game-container',
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 960,    // Smaller width for mobile (75% of desktop)
-        height: 540,   // Maintains 16:9 ratio
+        width: window.innerWidth * 0.95,  // 95% of screen width
+        height: (window.innerWidth * 0.95) * (9/16),  // maintain 16:9 ratio
         min: {
-            width: 800,
-            height: 450
+            width: 320,
+            height: 180
         },
         max: {
             width: 960,
@@ -35,16 +35,30 @@ export const mobileConfig = {
 
 // Mobile-specific UI adjustments
 export const mobileUI = {
-    // Font sizes (adjusted for smaller screen)
-    titleSize: '32px',
-    subtitleSize: '24px',
-    buttonSize: '20px',
-    textSize: '18px',
-    wordSize: '22px',  // Size for balloon words
+    // Font sizes (relative to screen width)
+    get titleSize() {
+        return Math.max(20, Math.min(32, window.innerWidth * 0.04)) + 'px';
+    },
+    get subtitleSize() {
+        return Math.max(16, Math.min(24, window.innerWidth * 0.03)) + 'px';
+    },
+    get buttonSize() {
+        return Math.max(14, Math.min(20, window.innerWidth * 0.025)) + 'px';
+    },
+    get textSize() {
+        return Math.max(12, Math.min(18, window.innerWidth * 0.022)) + 'px';
+    },
+    get wordSize() {
+        return Math.max(16, Math.min(22, window.innerWidth * 0.028)) + 'px';
+    },
     
-    // Spacing
-    padding: 15,
-    buttonHeight: 40,
+    // Spacing (relative to screen size)
+    get padding() {
+        return Math.max(10, Math.min(15, window.innerWidth * 0.02));
+    },
+    get buttonHeight() {
+        return Math.max(30, Math.min(40, window.innerWidth * 0.05));
+    },
     
     // Colors (same as desktop)
     primaryColor: '#4CAF50',
@@ -60,15 +74,19 @@ export const mobileUI = {
 // Mobile-specific game adjustments
 export const mobileGame = {
     // Balloon settings
-    balloonBaseScale: 0.75,     // Slightly smaller balloons
-    balloonSpacing: 150,        // Adjusted spacing
+    get balloonBaseScale() {
+        return Math.max(0.5, Math.min(0.75, window.innerWidth * 0.001));
+    },
+    get balloonSpacing() {
+        return Math.max(100, Math.min(150, window.innerWidth * 0.15));
+    },
     balloonSpeed: {
         min: 80,
         max: 160
     },
     
     // Touch settings
-    touchHitArea: 1.3,          // 30% larger hit area for touch
+    touchHitArea: 1.3,
     touchFeedback: {
         duration: 100,
         alpha: 0.3
@@ -86,10 +104,18 @@ export const mobileScenes = {
     
     // Game scene
     game: {
-        headerY: 20,            // Top UI position
-        heartsY: 30,           // Hearts position
-        heartsSpacing: 25,     // Space between hearts
-        scoreY: 30             // Score/round position
+        get headerY() {
+            return Math.max(15, Math.min(20, window.innerHeight * 0.04));
+        },
+        get heartsY() {
+            return Math.max(20, Math.min(30, window.innerHeight * 0.06));
+        },
+        get heartsSpacing() {
+            return Math.max(20, Math.min(25, window.innerWidth * 0.03));
+        },
+        get scoreY() {
+            return Math.max(20, Math.min(30, window.innerHeight * 0.06));
+        }
     },
     
     // Game over/Win scenes
