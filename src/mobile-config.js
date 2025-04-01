@@ -5,11 +5,11 @@ export const mobileConfig = {
         mode: Phaser.Scale.FIT,
         parent: 'game-container',
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 720,  // Smaller base width for mobile
-        height: 1280, // Taller height for mobile
+        width: 540,    // Standard mobile width (good for most phones)
+        height: 960,   // 16:9 vertical ratio
         min: {
-            width: 400,
-            height: 600
+            width: 320,
+            height: 570
         },
         max: {
             width: 720,
@@ -25,7 +25,7 @@ export const mobileConfig = {
         }
     },
     input: {
-        activePointers: 1,
+        activePointers: 2,
         touch: {
             capture: true,
             preventDefault: true
@@ -35,15 +35,28 @@ export const mobileConfig = {
 
 // Mobile-specific UI adjustments
 export const mobileUI = {
-    // Font sizes
-    titleSize: '64px',
-    subtitleSize: '32px',
-    buttonSize: '28px',
-    textSize: '20px',
+    // Font sizes (larger for better touch)
+    titleSize: '48px',
+    subtitleSize: '28px',
+    buttonSize: '24px',
+    textSize: '22px',
+    wordSize: '26px',  // Size for balloon words
     
-    // Spacing
-    padding: 20,
-    buttonHeight: 50,
+    // Spacing and positioning
+    padding: {
+        top: 20,
+        bottom: 30,
+        horizontal: 15
+    },
+    buttonHeight: 60,
+    
+    // Layout
+    headerHeight: 80,    // Space for score/lives at top
+    footerHeight: 60,    // Space at bottom
+    balloonArea: {
+        top: 100,        // Start of balloon spawn area
+        bottom: 200      // Space from bottom for UI
+    },
     
     // Colors
     primaryColor: '#4CAF50',
@@ -59,36 +72,66 @@ export const mobileUI = {
 // Mobile-specific game adjustments
 export const mobileGame = {
     // Balloon settings
-    balloonBaseScale: 0.8,
-    balloonSpacing: 0.15,
-    balloonSpeed: 1.2,
+    balloonBaseScale: 1.2,      // Larger balloons for touch
+    balloonSpacing: 180,        // Vertical spacing between balloons
+    balloonSpeed: {
+        min: 60,                // Slower speed for better control
+        max: 120
+    },
+    balloonColumns: 2,          // 2 columns of balloons
+    maxBalloonsOnScreen: 4,     // Fewer balloons at once
+    
+    // Spawn settings
+    spawnDelay: {
+        initial: 2000,          // More time between spawns
+        min: 1500
+    },
     
     // Text settings
-    textPadding: 10,
-    textScale: 0.8,
+    textPadding: 15,
+    textScale: 1,
     
     // Gameplay adjustments
-    baseTime: 16, // Slower base time for mobile
-    minTime: 10,
+    baseTime: 20,              // More time for mobile players
+    minTime: 12,
     lives: 10,
     
-    // Touch hit area multiplier
-    touchHitArea: 1.5
+    // Touch settings
+    touchHitArea: 1.4,         // 40% larger hit area for touch
+    touchFeedback: {
+        duration: 100,
+        alpha: 0.3
+    }
 };
 
 // Mobile-specific scene configurations
 export const mobileScenes = {
     // Main menu
-    menuTitleY: 0.2,
-    menuButtonY: 0.6,
+    menu: {
+        titleY: 0.2,           // Title position from top
+        buttonY: 0.7,          // Button position from top
+        spacing: 80            // Space between elements
+    },
     
     // Game scene
-    uiPadding: 10,
-    heartsSpacing: 40,
+    game: {
+        headerY: 30,           // Top UI position
+        heartsY: 80,           // Hearts position
+        heartsSpacing: 35,     // Space between hearts
+        scoreY: 40,            // Score/round position
+        balloonStart: {
+            minY: 150,         // Minimum spawn height
+            maxY: 800          // Maximum spawn height
+        }
+    },
     
     // Game over/Win scenes
-    textBoxWidth: 0.8,
-    textBoxHeight: 0.5,
-    textBoxY: 0.4,
-    buttonY: 0.85
+    endScreens: {
+        titleY: 0.15,          // Title position
+        textBoxY: 0.3,         // Text box position
+        textBoxWidth: 0.9,     // 90% of screen width
+        textBoxHeight: 0.4,    // 40% of screen height
+        buttonY: 0.8,          // Button position
+        spacing: 40            // Space between elements
+    }
 }; 
