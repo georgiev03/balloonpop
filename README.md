@@ -48,16 +48,6 @@ npm run dev
 ```bash
 npm run build
 ```
-
-## Deployment
-
-The game is deployed using GitHub Pages. To deploy:
-
-1. Push your changes to GitHub
-2. Go to repository Settings > Pages
-3. Select the main branch as the source
-4. The game will be available at `https://yourusername.github.io/balloonpop`
-
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details. 
