@@ -2,19 +2,21 @@
 export const mobileConfig = {
     type: Phaser.AUTO,
     scale: {
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.RESIZE,
         parent: 'game-container',
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: window.innerWidth * 0.95,  // 95% of screen width
-        height: (window.innerWidth * 0.95) * (9/16),  // maintain 16:9 ratio
+        width: '100%',
+        height: '100%',
         min: {
             width: 320,
             height: 180
         },
         max: {
-            width: 960,
-            height: 540
-        }
+            width: 2048,
+            height: 1152
+        },
+        expandParent: true,
+        autoRound: true
     },
     backgroundColor: '#ffffff',
     physics: {
@@ -27,10 +29,14 @@ export const mobileConfig = {
     input: {
         activePointers: 2,
         touch: {
-            capture: true,
-            preventDefault: true
+            target: document.getElementById('game-container'),
+            capture: true
         }
-    }
+    },
+    dom: {
+        createContainer: true
+    },
+    autoMobile: true
 };
 
 // Mobile-specific UI adjustments

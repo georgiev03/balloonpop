@@ -1,112 +1,56 @@
 import { mobileConfig, mobileUI, mobileGame, mobileScenes } from './mobile-config.js';
 import { BootScene, MainMenuScene, GameScene, GameOverScene, WinScene } from './main.js';
 
-// Handle fullscreen and orientation
-document.addEventListener('DOMContentLoaded', () => {
-    // Prevent default touch behaviors
-    document.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-    }, { passive: false });
-
-    document.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-    }, { passive: false });
-
-    // Handle orientation change
-    window.addEventListener('orientationchange', handleOrientation);
-    // Also check initial orientation
-    handleOrientation();
-
-    // Add mobile viewport meta tag if not present
-    if (!document.querySelector('meta[name="viewport"]')) {
-        const meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-        document.head.appendChild(meta);
+// Initialize game with proper scaling
+const game = new Phaser.Game({
+    ...mobileConfig,
+    scale: {
+        ...mobileConfig.scale,
+        mode: Phaser.Scale.RESIZE,
+        width: window.innerWidth,
+        height: window.innerHeight,
     }
-
-    // Add mobile-specific styles
-    const style = document.createElement('style');
-    style.textContent = `
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            touch-action: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        #game-container {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            touch-action: none;
-        }
-        * {
-            touch-action: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        #rotate-prompt {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            z-index: 1000;
-        }
-        .fullscreen {
-            width: 100vw !important;
-            height: 100vh !important;
-        }
-    `;
-    document.head.appendChild(style);
-
-    // Add rotation prompt
-    const rotatePrompt = document.createElement('div');
-    rotatePrompt.id = 'rotate-prompt';
-    rotatePrompt.textContent = 'За по-добро изживяване, моля завъртете телефона хоризонтално';
-    document.body.appendChild(rotatePrompt);
 });
 
-// Handle orientation changes
-async function handleOrientation() {
+// Handle orientation changes and fullscreen
+function handleOrientation() {
     const isLandscape = window.innerWidth > window.innerHeight;
     const rotatePrompt = document.getElementById('rotate-prompt');
     const gameContainer = document.getElementById('game-container');
 
     if (isLandscape) {
-        // Hide rotation prompt
         rotatePrompt.style.display = 'none';
-        
-        // Try to go fullscreen
-        try {
-            if (!document.fullscreenElement) {
-                await document.documentElement.requestFullscreen();
-                gameContainer.classList.add('fullscreen');
-            }
-        } catch (err) {
-            console.log('Fullscreen request failed:', err);
+        if (!document.fullscreenElement && gameContainer.requestFullscreen) {
+            gameContainer.requestFullscreen().catch(err => {
+                console.log('Fullscreen request failed:', err);
+            });
         }
     } else {
-        // Show rotation prompt
         rotatePrompt.style.display = 'block';
-        
-        // Exit fullscreen if we're in it
         if (document.fullscreenElement) {
             document.exitFullscreen();
-            gameContainer.classList.remove('fullscreen');
         }
     }
+
+    // Update game size
+    game.scale.resize(window.innerWidth, window.innerHeight);
 }
+
+// Add event listeners
+window.addEventListener('load', () => {
+    handleOrientation();
+    window.addEventListener('orientationchange', () => {
+        // Small delay to allow orientation change to complete
+        setTimeout(handleOrientation, 100);
+    });
+    window.addEventListener('resize', () => {
+        game.scale.resize(window.innerWidth, window.innerHeight);
+    });
+});
+
+// Prevent default touch behaviors
+document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+document.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
 
 class MobileGameScene extends Phaser.Scene {
     constructor() {
@@ -344,24 +288,6 @@ class MobileGameScene extends Phaser.Scene {
         );
     }
 }
-
-// Initialize mobile game with updated config
-const game = new Phaser.Game({
-    ...mobileConfig,
-    scale: {
-        ...mobileConfig.scale,
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        autoRound: true,
-    },
-    scene: [
-        BootScene,
-        MainMenuScene,
-        MobileGameScene,
-        GameOverScene,
-        WinScene
-    ]
-});
 
 // Add resize handler
 window.addEventListener('resize', () => {
