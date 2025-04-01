@@ -5,8 +5,8 @@ export const mobileConfig = {
         mode: Phaser.Scale.RESIZE,
         parent: 'game-container',
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: '90%',
-        height: '90%',
+        width: '80%',
+        height: '80%',
         min: {
             width: 320,
             height: 180
