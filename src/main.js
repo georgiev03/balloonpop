@@ -205,26 +205,8 @@ class MainMenuScene extends Phaser.Scene {
         });
 
         // Start game on click
-        buttonText.on('pointerdown', async () => {
-            // Try to enter fullscreen
-            try {
-                const gameContainer = document.getElementById('game-container');
-                if (gameContainer) {
-                    if (gameContainer.requestFullscreen) {
-                        await gameContainer.requestFullscreen();
-                    } else if (gameContainer.webkitRequestFullscreen) {
-                        await gameContainer.webkitRequestFullscreen();
-                    } else if (gameContainer.mozRequestFullScreen) {
-                        await gameContainer.mozRequestFullScreen();
-                    } else if (gameContainer.msRequestFullscreen) {
-                        await gameContainer.msRequestFullscreen();
-                    }
-                }
-            } catch (err) {
-                console.log('Fullscreen request failed:', err);
-            }
-
-            // Start the game scene
+        buttonText.on('pointerdown', () => {
+            // Start the game scene immediately without fullscreen request
             this.scene.start('GameScene');
         });
 
@@ -415,12 +397,12 @@ class GameScene extends Phaser.Scene {
         console.log(`Round ${this.round}, Time to top: ${currentTime} seconds`);
 
         // Calculate balloon width and total width
-        const balloonBaseWidth = Math.min(width, height) * 0.084; // Increased from 0.08 (5% increase)
-        const balloonWidth = balloonBaseWidth * (1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.084 : 0)); // Increased from 0.08
+        const balloonBaseWidth = Math.min(width, height) * 0.095; // Increased from 0.084
+        const balloonWidth = balloonBaseWidth * (1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.095 : 0)); // Increased from 0.084
         
         // Calculate base spacing and adjust it based on word length
-        const baseSpacing = width * 0.13; // Keep current spacing
-        const wordLengthSpacingAdjustment = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.0525 : 0); // Increased from 0.05
+        const baseSpacing = width * 0.14; // Increased from 0.13
+        const wordLengthSpacingAdjustment = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.06 : 0); // Increased from 0.0525
         const spacing = baseSpacing * wordLengthSpacingAdjustment;
 
         // Calculate total width needed
@@ -452,9 +434,9 @@ class GameScene extends Phaser.Scene {
             // Use incorrect word for incorrect balloon, or take next word from shuffled array
             const word = isIncorrect ? incorrectWord : shuffledCorrectWords[i >= incorrectIndex ? i - 1 : i];
 
-            // Calculate scale based on longest word length - reduced scaling
-            const baseScale = Math.min(width, height) * 0.00152; // Increased from 0.00145
-            const wordLengthScale = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.0525 : 0); // Increased from 0.05
+            // Calculate scale based on longest word length - increased scaling
+            const baseScale = Math.min(width, height) * 0.00172; // Increased from 0.00152
+            const wordLengthScale = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.06 : 0); // Increased from 0.0525
             const balloonScale = baseScale * wordLengthScale;
 
             // Create balloon sprite with size relative to screen and longest word length
@@ -470,8 +452,8 @@ class GameScene extends Phaser.Scene {
             const actualBalloonHeight = balloon.height * balloonScale;
 
             // Calculate text size based on longest word length - adjusted for better readability
-            const baseFontSize = Math.min(width, height) * 0.026;
-            const fontScale = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.0315 : 0);
+            const baseFontSize = Math.min(width, height) * 0.029; // Increased from 0.026
+            const fontScale = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.035 : 0); // Increased from 0.0315
             const fontSize = Math.floor(baseFontSize * fontScale);
 
             // Add word text with improved styling
@@ -482,10 +464,10 @@ class GameScene extends Phaser.Scene {
                 fill: '#000000',
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 padding: { 
-                    x: 0, // Remove horizontal padding to let fixedWidth handle it
-                    y: fontSize * 0.4 // Increased vertical padding
+                    x: 0,
+                    y: fontSize * 0.45 // Increased from 0.4
                 },
-                fixedWidth: actualBalloonWidth, // Full balloon width
+                fixedWidth: actualBalloonWidth,
                 align: 'center'
             }).setOrigin(0.5);
 
