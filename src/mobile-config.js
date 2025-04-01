@@ -5,15 +5,15 @@ export const mobileConfig = {
         mode: Phaser.Scale.FIT,
         parent: 'game-container',
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 540,    // Standard mobile width (good for most phones)
-        height: 960,   // 16:9 vertical ratio
+        width: 960,    // Smaller width for mobile (75% of desktop)
+        height: 540,   // Maintains 16:9 ratio
         min: {
-            width: 320,
-            height: 570
+            width: 800,
+            height: 450
         },
         max: {
-            width: 720,
-            height: 1280
+            width: 960,
+            height: 540
         }
     },
     backgroundColor: '#ffffff',
@@ -35,30 +35,18 @@ export const mobileConfig = {
 
 // Mobile-specific UI adjustments
 export const mobileUI = {
-    // Font sizes (larger for better touch)
-    titleSize: '48px',
-    subtitleSize: '28px',
-    buttonSize: '24px',
-    textSize: '22px',
-    wordSize: '26px',  // Size for balloon words
+    // Font sizes (adjusted for smaller screen)
+    titleSize: '32px',
+    subtitleSize: '24px',
+    buttonSize: '20px',
+    textSize: '18px',
+    wordSize: '22px',  // Size for balloon words
     
-    // Spacing and positioning
-    padding: {
-        top: 20,
-        bottom: 30,
-        horizontal: 15
-    },
-    buttonHeight: 60,
+    // Spacing
+    padding: 15,
+    buttonHeight: 40,
     
-    // Layout
-    headerHeight: 80,    // Space for score/lives at top
-    footerHeight: 60,    // Space at bottom
-    balloonArea: {
-        top: 100,        // Start of balloon spawn area
-        bottom: 200      // Space from bottom for UI
-    },
-    
-    // Colors
+    // Colors (same as desktop)
     primaryColor: '#4CAF50',
     secondaryColor: '#2196F3',
     textColor: '#ffffff',
@@ -72,32 +60,15 @@ export const mobileUI = {
 // Mobile-specific game adjustments
 export const mobileGame = {
     // Balloon settings
-    balloonBaseScale: 1.2,      // Larger balloons for touch
-    balloonSpacing: 180,        // Vertical spacing between balloons
+    balloonBaseScale: 0.75,     // Slightly smaller balloons
+    balloonSpacing: 150,        // Adjusted spacing
     balloonSpeed: {
-        min: 60,                // Slower speed for better control
-        max: 120
+        min: 80,
+        max: 160
     },
-    balloonColumns: 2,          // 2 columns of balloons
-    maxBalloonsOnScreen: 4,     // Fewer balloons at once
-    
-    // Spawn settings
-    spawnDelay: {
-        initial: 2000,          // More time between spawns
-        min: 1500
-    },
-    
-    // Text settings
-    textPadding: 15,
-    textScale: 1,
-    
-    // Gameplay adjustments
-    baseTime: 20,              // More time for mobile players
-    minTime: 12,
-    lives: 10,
     
     // Touch settings
-    touchHitArea: 1.4,         // 40% larger hit area for touch
+    touchHitArea: 1.3,          // 30% larger hit area for touch
     touchFeedback: {
         duration: 100,
         alpha: 0.3
@@ -115,14 +86,10 @@ export const mobileScenes = {
     
     // Game scene
     game: {
-        headerY: 30,           // Top UI position
-        heartsY: 80,           // Hearts position
-        heartsSpacing: 35,     // Space between hearts
-        scoreY: 40,            // Score/round position
-        balloonStart: {
-            minY: 150,         // Minimum spawn height
-            maxY: 800          // Maximum spawn height
-        }
+        headerY: 20,            // Top UI position
+        heartsY: 30,           // Hearts position
+        heartsSpacing: 25,     // Space between hearts
+        scoreY: 30             // Score/round position
     },
     
     // Game over/Win scenes
