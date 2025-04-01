@@ -20,7 +20,7 @@ class BootScene extends Phaser.Scene {
         this.load.image('balloon', 'assets/balloon.png');
         this.load.image('arrow', 'assets/arrow.svg');
         this.load.image('heart', 'assets/heart.png');
-        this.load.image('heart-empty', 'assets/heart-empty.png');
+        this.load.image('heart-empty', 'assets/brokenheart.png');
         this.load.image('startscreen', 'assets/startscreen.jpg');
         this.load.audio('pop', 'assets/pop.mp3');
         this.load.audio('success', 'assets/success.mp3');
