@@ -43,8 +43,6 @@ class OrientationHandler {
         
         if (isLandscape && !this.isFullscreen) {
             await this.enterFullscreen();
-        } else if (!isLandscape && this.isFullscreen) {
-            this.exitFullscreen();
         }
     }
 
@@ -56,6 +54,10 @@ class OrientationHandler {
         }
         // Fallback to window dimensions
         return window.innerWidth > window.innerHeight;
+    }
+
+    async requestFullscreen() {
+        return this.enterFullscreen();
     }
 
     async enterFullscreen() {
@@ -72,10 +74,13 @@ class OrientationHandler {
                     await element.msRequestFullscreen();
                 }
                 this.isFullscreen = true;
+                return true;
             } catch (error) {
                 console.warn('Fullscreen request failed:', error);
+                return false;
             }
         }
+        return true;
     }
 
     exitFullscreen() {
