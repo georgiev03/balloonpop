@@ -23,7 +23,14 @@
             -ms-user-select: none;
             user-select: none;
         }
-        html, body {
+        html {
+            position: fixed;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
+        }
+        body {
             height: 100%;
             width: 100%;
             overflow: hidden;
@@ -31,6 +38,8 @@
             position: fixed;
             touch-action: none;
             -webkit-overflow-scrolling: none;
+            overscroll-behavior: none;
+            -webkit-overscroll-behavior: none;
         }
         #game-container {
             width: 100%;
@@ -40,9 +49,13 @@
             left: 0;
             touch-action: none;
             -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
+            overscroll-behavior: none;
         }
         canvas {
             touch-action: none !important;
+            position: absolute;
+            overscroll-behavior: none;
         }
         #rotation-prompt {
             display: none;
@@ -60,6 +73,7 @@
             text-align: center;
             padding: 20px;
             touch-action: none;
+            overscroll-behavior: none;
         }
         #rotation-prompt img {
             width: 64px;
@@ -113,11 +127,22 @@
     </div>
 
     <script type="module">
-        // Prevent default touch behaviors
-        document.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-        }, { passive: false });
+        // Prevent ALL scroll events
+        ['scroll', 'touchmove', 'wheel'].forEach((eventName) => {
+            document.addEventListener(eventName, (e) => {
+                e.preventDefault();
+            }, { passive: false });
+            
+            window.addEventListener(eventName, (e) => {
+                e.preventDefault();
+            }, { passive: false });
+            
+            document.body.addEventListener(eventName, (e) => {
+                e.preventDefault();
+            }, { passive: false });
+        });
 
+        // Prevent touchstart except for buttons
         document.addEventListener('touchstart', (e) => {
             if (e.target.nodeName !== 'BUTTON') {
                 e.preventDefault();
@@ -134,11 +159,6 @@
             lastTouchEnd = now;
         }, { passive: false });
 
-        // Prevent scroll outside game container
-        document.body.addEventListener('scroll', (e) => {
-            e.preventDefault();
-        }, { passive: false });
-
         // Lock orientation to landscape on supported devices
         if (screen.orientation && screen.orientation.lock) {
             try {
@@ -147,6 +167,16 @@
                 console.log('Orientation lock not supported');
             }
         }
+
+        // Prevent elastic scrolling on iOS
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.height = '100%';
+        
+        // Additional iOS scroll prevention
+        document.ontouchmove = (e) => {
+            e.preventDefault();
+        };
 
         import OrientationHandler from './src/orientation-handler.js';
         
