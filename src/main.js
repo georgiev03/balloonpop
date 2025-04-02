@@ -1211,8 +1211,7 @@ const config = {
             width: 1280,
             height: 720
         },
-        autoRound: true,
-        expandParent: true
+        autoRound: true
     },
     backgroundColor: '#ffffff',
     physics: {
