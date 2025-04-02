@@ -8,7 +8,7 @@ class GameScene extends Phaser.Scene {
         // Define scaling constants
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         this.BALLOON_SCALE = isMobile ? 1.2 : 0.6;
-        this.TEXT_BASE_SIZE = isMobile ? 38 : 32;
+        this.TEXT_BASE_SIZE = isMobile ? 40 : 34;
         this.TEXT_SCALE = isMobile ? 0.9 : 0.9;
         this.SPACING = isMobile ? 110 : 200;
     }
