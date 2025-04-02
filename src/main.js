@@ -1204,15 +1204,15 @@ const mobileConfig = {
         mode: Phaser.Scale.FIT,
         parent: 'game-container',
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 480,
-        height: 270,
+        width: window.innerWidth,
+        height: window.innerHeight,
         min: {
             width: 320,
             height: 180
         },
         max: {
-            width: 480,
-            height: 270
+            width: 1280,
+            height: 720
         }
     },
     backgroundColor: '#ffffff',
