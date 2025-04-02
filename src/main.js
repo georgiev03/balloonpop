@@ -1202,16 +1202,18 @@ const config = {
         mode: Phaser.Scale.FIT,
         parent: 'game-container',
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 1280, // Fixed base width
-        height: 720, // Fixed base height
+        width: 1280,
+        height: 720,
         min: {
-            width: 640,  // Reduced from 800
-            height: 360  // Reduced from 600
+            width: 640,
+            height: 360
         },
         max: {
             width: 1280,
             height: 720
-        }
+        },
+        expandParent: false,
+        autoRound: true
     },
     backgroundColor: '#ffffff',
     physics: {
