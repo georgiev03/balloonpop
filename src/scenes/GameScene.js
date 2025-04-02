@@ -4,13 +4,16 @@ class GameScene extends Phaser.Scene {
         this.score = 0;
         this.lives = 10;
         this.currentRound = 1;
+        
+        // Define scaling constants
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        this.BALLOON_SCALE = isMobile ? 1.2 : 0.6;
+        this.TEXT_BASE_SIZE = isMobile ? 38 : 32;
+        this.TEXT_SCALE = isMobile ? 0.9 : 0.9;
+        this.SPACING = isMobile ? 110 : 200;
     }
 
     create() {
-        // Set balloon scale based on device
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        this.balloonScale = isMobile ? 1.1 : 0.6; // Increased mobile scale to 1.1 (20% bigger than previous 0.9)
-
         // Initialize game state
         this.score = 0;
         this.lives = 10;
@@ -30,12 +33,10 @@ class GameScene extends Phaser.Scene {
 
     createBalloonsForRound() {
         const words = this.getWordsForRound(this.currentRound);
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const spacing = isMobile ? 120 : 200; // Slightly reduced spacing for mobile to accommodate larger balloons
-        const startX = (this.game.config.width - (words.length - 1) * spacing) / 2;
+        const startX = (this.game.config.width - (words.length - 1) * this.SPACING) / 2;
         
         words.forEach((word, index) => {
-            const x = startX + index * spacing;
+            const x = startX + index * this.SPACING;
             const y = this.game.config.height / 2;
             const balloon = this.createBalloon(x, y, word);
             
@@ -53,33 +54,54 @@ class GameScene extends Phaser.Scene {
 
     createBalloon(x, y, word) {
         const balloon = this.add.image(x, y, 'balloon');
-        balloon.setScale(this.balloonScale);
+        balloon.setScale(this.BALLOON_SCALE);
         
-        // Adjust text size for mobile
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const textScale = isMobile ? 0.8 : 0.9; // Increased text scale for mobile to match larger balloons
+        // Create text with larger base size on mobile
         const text = this.add.text(x, y, word, {
-            fontSize: `${32 * textScale}px`,
+            fontSize: `${this.TEXT_BASE_SIZE * this.TEXT_SCALE}px`,
             fill: '#000000',
             fontFamily: 'Arial',
-            align: 'center'
+            align: 'center',
+            fontStyle: 'bold' // Added bold style for better readability
         });
         text.setOrigin(0.5);
 
         // Group balloon and text
         const container = this.add.container(0, 0, [balloon, text]);
-        container.setSize(balloon.width * this.balloonScale, balloon.height * this.balloonScale);
+        container.setSize(balloon.width * this.BALLOON_SCALE, balloon.height * this.BALLOON_SCALE);
 
         // Enable input on container with larger hit area for mobile
-        const hitAreaScale = isMobile ? 1.3 : 1.0; // Kept the same hit area scale
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const hitAreaScale = isMobile ? 1.3 : 1.0;
         container.setInteractive(new Phaser.Geom.Rectangle(
-            -balloon.width * this.balloonScale * hitAreaScale / 2,
-            -balloon.height * this.balloonScale * hitAreaScale / 2,
-            balloon.width * this.balloonScale * hitAreaScale,
-            balloon.height * this.balloonScale * hitAreaScale
+            -balloon.width * this.BALLOON_SCALE * hitAreaScale / 2,
+            -balloon.height * this.BALLOON_SCALE * hitAreaScale / 2,
+            balloon.width * this.BALLOON_SCALE * hitAreaScale,
+            balloon.height * this.BALLOON_SCALE * hitAreaScale
         ), Phaser.Geom.Rectangle.Contains);
 
         return container;
+    }
+
+    createUI() {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const uiTextScale = isMobile ? 1.5 : 1;
+        
+        // Add round text
+        this.roundText = this.add.text(10, 10, `Рунд: ${this.currentRound}`, {
+            fontSize: `${24 * uiTextScale}px`,
+            fill: '#000000',
+            fontFamily: 'Arial',
+            fontStyle: 'bold'
+        });
+
+        // Create hearts for lives
+        this.hearts = [];
+        for (let i = 0; i < this.lives; i++) {
+            const heart = this.add.image(20 + (i % 5) * 30, 50 + Math.floor(i / 5) * 30, 'heart');
+            heart.setScale(0.5);
+            this.hearts.push(heart);
+        }
     }
 
     // Rest of the class...
