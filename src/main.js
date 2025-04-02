@@ -1196,7 +1196,37 @@ class WinScene extends Phaser.Scene {
 }
 
 // Game configuration
-const config = {
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+const mobileConfig = {
+    type: Phaser.AUTO,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        parent: 'game-container',
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 640,
+        height: 360,
+        min: {
+            width: 480,
+            height: 270
+        },
+        max: {
+            width: 640,
+            height: 360
+        }
+    },
+    backgroundColor: '#ffffff',
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 0 },
+            debug: false
+        }
+    },
+    scene: [BootScene, MainMenuScene, GameScene, GameOverScene, WinScene]
+};
+
+const desktopConfig = {
     type: Phaser.AUTO,
     scale: {
         mode: Phaser.Scale.FIT,
@@ -1224,11 +1254,11 @@ const config = {
     scene: [BootScene, MainMenuScene, GameScene, GameOverScene, WinScene]
 };
 
-// Start the game
+// Start the game with appropriate config
 console.log('Initializing game...');
 let game;
 try {
-    game = new Phaser.Game(config);
+    game = new Phaser.Game(isMobile ? mobileConfig : desktopConfig);
     console.log('Game initialized successfully!');
 } catch (error) {
     console.error('Error initializing game:', error);
