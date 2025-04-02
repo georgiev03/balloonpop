@@ -2,7 +2,7 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,53 +22,50 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         html {
             position: fixed;
-            height: 100%;
             width: 100%;
+            height: 100%;
             overflow: hidden;
+            touch-action: none;
+            -ms-touch-action: none;
             overscroll-behavior: none;
-            background-color: #000;
+            background: #000;
         }
         body {
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            background-color: #000;
             position: fixed;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
             touch-action: none;
-            -webkit-overflow-scrolling: none;
+            -ms-touch-action: none;
+            -webkit-overflow-scrolling: touch;
             overscroll-behavior: none;
-            -webkit-overscroll-behavior: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         #game-container {
-            width: 100%;
-            height: 100%;
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
-            touch-action: none;
-            -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
-            overscroll-behavior: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            touch-action: none;
+            -ms-touch-action: none;
+            -webkit-tap-highlight-color: transparent;
         }
         canvas {
+            display: block;
             touch-action: none !important;
-            position: absolute;
-            overscroll-behavior: none;
-            max-width: 100vw !important;
-            max-height: 100vh !important;
-            width: auto !important;
-            height: auto !important;
-            margin: auto !important;
-            object-fit: contain !important;
+            -ms-touch-action: none !important;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            outline: none;
         }
         #rotation-prompt {
             display: none;
@@ -85,13 +82,12 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
-            touch-action: none;
-            overscroll-behavior: none;
         }
         #rotation-prompt img {
             width: 64px;
             height: 64px;
             margin-bottom: 10px;
+            pointer-events: none;
         }
         #install-prompt {
             display: none;
@@ -107,8 +103,6 @@
             z-index: 1000;
             text-align: center;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            touch-action: none;
-            pointer-events: auto;
         }
         #install-prompt button {
             background: #4CAF50;
@@ -141,31 +135,17 @@
     </div>
 
     <script type="module">
-        // Lock viewport
-        const viewport = document.querySelector('meta[name=viewport]');
-        viewport.setAttribute('content', viewport.content + ', maximum-scale=1.0, user-scalable=0');
+        // Prevent default touch behaviors
+        function preventDefault(e) {
+            e.preventDefault();
+        }
 
-        // Prevent ALL scroll events
-        ['scroll', 'touchmove', 'wheel'].forEach((eventName) => {
-            document.addEventListener(eventName, (e) => {
-                e.preventDefault();
-            }, { passive: false });
-            
-            window.addEventListener(eventName, (e) => {
-                e.preventDefault();
-            }, { passive: false });
-            
-            document.body.addEventListener(eventName, (e) => {
-                e.preventDefault();
-            }, { passive: false });
-        });
-
-        // Prevent touchstart except for buttons
-        document.addEventListener('touchstart', (e) => {
-            if (e.target.nodeName !== 'BUTTON') {
-                e.preventDefault();
-            }
-        }, { passive: false });
+        // Apply passive: false to critical events
+        document.addEventListener('touchmove', preventDefault, { passive: false });
+        document.addEventListener('touchstart', preventDefault, { passive: false });
+        document.addEventListener('touchend', preventDefault, { passive: false });
+        document.addEventListener('scroll', preventDefault, { passive: false });
+        document.addEventListener('wheel', preventDefault, { passive: false });
 
         // Prevent zoom on double tap
         let lastTouchEnd = 0;
@@ -185,21 +165,6 @@
                 console.log('Orientation lock not supported');
             }
         }
-
-        // Handle resize events
-        function handleResize() {
-            const gameContainer = document.getElementById('game-container');
-            const canvas = gameContainer.querySelector('canvas');
-            if (canvas) {
-                canvas.style.maxWidth = window.innerWidth + 'px';
-                canvas.style.maxHeight = window.innerHeight + 'px';
-            }
-        }
-
-        window.addEventListener('resize', handleResize);
-        window.addEventListener('orientationchange', () => {
-            setTimeout(handleResize, 100);
-        });
 
         import OrientationHandler from './src/orientation-handler.js';
         
@@ -241,29 +206,27 @@
         }
 
         // Handle rotation changes
-        window.addEventListener('resize', () => {
+        function checkOrientation() {
             if (window.innerWidth > window.innerHeight) {
                 rotationPrompt.style.display = 'none';
             } else {
                 rotationPrompt.style.display = 'flex';
             }
+        }
+
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(checkOrientation, 100);
         });
 
-        // Initial check
-        if (window.innerWidth > window.innerHeight) {
-            rotationPrompt.style.display = 'none';
-        } else {
-            rotationPrompt.style.display = 'flex';
-        }
+        // Initial orientation check
+        checkOrientation();
 
         // Load the game script
         const script = document.createElement('script');
         script.src = 'dist/bundle.js';
         script.type = 'module';
         document.body.appendChild(script);
-
-        // Initial resize handling
-        setTimeout(handleResize, 100);
     </script>
 </body>
 </html> 

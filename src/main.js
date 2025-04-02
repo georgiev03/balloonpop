@@ -1199,21 +1199,22 @@ class WinScene extends Phaser.Scene {
 const config = {
     type: Phaser.AUTO,
     scale: {
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.RESIZE,
         parent: 'game-container',
+        width: '100%',
+        height: '100%',
+        autoRound: true,
+        expandParent: true,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 1280,
-        height: 720,
         min: {
-            width: 640,
-            height: 360
+            width: 360,
+            height: 640
         },
         max: {
             width: 1280,
             height: 720
         },
-        expandParent: false,
-        autoRound: true
+        zoom: 1
     },
     backgroundColor: '#ffffff',
     physics: {
@@ -1226,23 +1227,8 @@ const config = {
     scene: [BootScene, MainMenuScene, GameScene, GameOverScene, WinScene]
 };
 
-// Add resize handler with proper centering
-window.addEventListener('resize', () => {
-    if (game) {
-        const width = Math.min(window.innerWidth, 1280);
-        const height = Math.min(window.innerHeight, 720);
-        game.scale.resize(width, height);
-        
-        // Center the game container
-        const gameContainer = document.getElementById('game-container');
-        if (gameContainer) {
-            gameContainer.style.position = 'absolute';
-            gameContainer.style.left = '50%';
-            gameContainer.style.top = '50%';
-            gameContainer.style.transform = 'translate(-50%, -50%)';
-        }
-    }
-});
+// Remove the resize handler as we're using Phaser's built-in RESIZE mode
+window.removeEventListener('resize', () => {});
 
 // Start the game
 console.log('Initializing game...');
