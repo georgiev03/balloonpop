@@ -1202,15 +1202,15 @@ const config = {
         mode: Phaser.Scale.FIT,
         parent: 'game-container',
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 800,
-        height: 450,
+        width: window.innerWidth || 800,
+        height: window.innerHeight || 450,
         min: {
-            width: 400,
-            height: 225
+            width: 320,
+            height: 180
         },
         max: {
-            width: 800,
-            height: 450
+            width: 1920,
+            height: 1080
         }
     },
     backgroundColor: '#ffffff',
