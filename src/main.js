@@ -205,25 +205,7 @@ class MainMenuScene extends Phaser.Scene {
         });
 
         // Start game on click
-        buttonText.on('pointerdown', async () => {
-            // Try to enter fullscreen
-            try {
-                const gameContainer = document.getElementById('game-container');
-                if (gameContainer) {
-                    if (gameContainer.requestFullscreen) {
-                        await gameContainer.requestFullscreen();
-                    } else if (gameContainer.webkitRequestFullscreen) {
-                        await gameContainer.webkitRequestFullscreen();
-                    } else if (gameContainer.mozRequestFullScreen) {
-                        await gameContainer.mozRequestFullScreen();
-                    } else if (gameContainer.msRequestFullscreen) {
-                        await gameContainer.msRequestFullscreen();
-                    }
-                }
-            } catch (err) {
-                console.log('Fullscreen request failed:', err);
-            }
-
+        buttonText.on('pointerdown', () => {
             // Start the game scene
             this.scene.start('GameScene');
         });
