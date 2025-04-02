@@ -1199,22 +1199,19 @@ class WinScene extends Phaser.Scene {
 const config = {
     type: Phaser.AUTO,
     scale: {
-        mode: Phaser.Scale.RESIZE,
+        mode: Phaser.Scale.FIT,
         parent: 'game-container',
-        width: '100%',
-        height: '100%',
-        autoRound: true,
-        expandParent: true,
         autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 1280,
+        height: 720,
         min: {
-            width: 360,
-            height: 640
+            width: 480,
+            height: 270
         },
         max: {
             width: 1280,
             height: 720
-        },
-        zoom: 1
+        }
     },
     backgroundColor: '#ffffff',
     physics: {
@@ -1226,9 +1223,6 @@ const config = {
     },
     scene: [BootScene, MainMenuScene, GameScene, GameOverScene, WinScene]
 };
-
-// Remove the resize handler as we're using Phaser's built-in RESIZE mode
-window.removeEventListener('resize', () => {});
 
 // Start the game
 console.log('Initializing game...');
