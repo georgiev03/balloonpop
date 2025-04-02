@@ -1198,22 +1198,16 @@ class WinScene extends Phaser.Scene {
 // Game configuration
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
+const isPortrait = window.innerHeight > window.innerWidth;
+
 const mobileConfig = {
     type: Phaser.AUTO,
     scale: {
         mode: Phaser.Scale.FIT,
         parent: 'game-container',
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: window.innerWidth,
-        height: window.innerHeight,
-        min: {
-            width: 320,
-            height: 180
-        },
-        max: {
-            width: 1280,
-            height: 720
-        }
+        width: isPortrait ? 360 : 640,
+        height: isPortrait ? 640 : 360
     },
     backgroundColor: '#ffffff',
     physics: {
