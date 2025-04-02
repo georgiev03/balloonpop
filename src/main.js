@@ -1199,19 +1199,19 @@ class WinScene extends Phaser.Scene {
 const config = {
     type: Phaser.AUTO,
     scale: {
-        mode: Phaser.Scale.RESIZE,
+        mode: Phaser.Scale.FIT,
         parent: 'game-container',
-        width: '100%',
-        height: '100%',
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 800,
+        height: 450,
         min: {
-            width: 360,
-            height: 640
+            width: 400,
+            height: 225
         },
         max: {
-            width: 1280,
-            height: 720
-        },
-        autoRound: true
+            width: 800,
+            height: 450
+        }
     },
     backgroundColor: '#ffffff',
     physics: {
