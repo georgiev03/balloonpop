@@ -21,7 +21,11 @@ class BootScene extends Phaser.Scene {
         this.load.image('arrow', 'assets/arrow.svg');
         this.load.image('heart', 'assets/heart.png');
         this.load.image('heart-empty', 'assets/brokenheart.png');
-        this.load.image('startscreen', 'assets/startscreen.jpg');
+        
+        // Load different background based on device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        this.load.image('startscreen', isMobile ? 'assets/startscreenmobile.jpeg' : 'assets/startscreen2.jpg');
+        
         this.load.audio('pop', 'assets/pop.mp3');
         this.load.audio('success', 'assets/success.mp3');
         this.load.audio('win', 'assets/win.mp3');
@@ -81,7 +85,7 @@ class MainMenuScene extends Phaser.Scene {
 
         // Add glow layers from outside in
         glowColors.forEach(({ color, alpha, thickness }) => {
-            const glowText = this.add.text(width / 2, height * 0.2, 'Правописни балони', {
+            const glowText = this.add.text(width / 2, height * 0.2, 'Граматико', {
                 fontSize: Math.min(width * 0.08, 84) + 'px',
                 fontFamily: 'Arial Black',
                 fontWeight: 'bold',
@@ -94,7 +98,7 @@ class MainMenuScene extends Phaser.Scene {
         });
 
         // Add solid text with neon effect
-        const titleText = this.add.text(width / 2, height * 0.2, 'Правописни балони', {
+        const titleText = this.add.text(width / 2, height * 0.2, 'Граматико', {
             fontSize: Math.min(width * 0.08, 84) + 'px',
             fontFamily: 'Arial Black',
             fontWeight: 'bold',
@@ -251,24 +255,30 @@ class MainMenuScene extends Phaser.Scene {
 class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
+        this.resetGame();
+    }
+
+    resetGame() {
         this.mistakeWords = [];
         this.wordSets = [];
         this.currentWordSet = null;
-        console.log('GameScene constructor called');
-    }
-
-    create() {
-        console.log('GameScene create called');
-        // Initialize game state
         this.round = 1;
         this.lives = 10;
         this.balloons = [];
         this.baseTime = 14;
         this.minTime = 8;
+        // Reset available words to null so we reload them in create()
+        this.availableWords = null;
+    }
+
+    create() {
+        console.log('GameScene create called');
+        // Reset game state when starting a new game
+        this.resetGame();
         
         // Get words from loaded JSON and create available words array
         this.allWords = this.cache.json.get('wordList');
-        this.availableWords = [...this.allWords]; // Create a copy of all words
+        this.availableWords = [...this.allWords]; // Create a fresh copy of all words
         console.log(`Loaded ${this.availableWords.length} words from JSON file`);
 
         // Add UI
@@ -298,8 +308,8 @@ class GameScene extends Phaser.Scene {
         });
 
         // Lives display - positioned directly below round counter
-        const heartsStartY = this.roundText.y + this.roundText.height + 30;
-        this.livesContainer = this.add.container(uiStartX + 25, heartsStartY);
+        const heartsStartY = this.roundText.y + this.roundText.height + 50;
+        this.livesContainer = this.add.container(uiStartX + 30, heartsStartY);
         
         // Create health icons vertically with spacing relative to screen height
         this.healthIcons = [];
@@ -435,7 +445,7 @@ class GameScene extends Phaser.Scene {
             const word = isIncorrect ? incorrectWord : shuffledCorrectWords[i >= incorrectIndex ? i - 1 : i];
 
             // Calculate scale based on longest word length - increased scaling
-            const baseScale = Math.min(width, height) * 0.00172; // Increased from 0.00152
+            const baseScale = Math.min(width, height) * 0.0018; // Increased from 0.00152
             const wordLengthScale = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.06 : 0); // Increased from 0.0525
             const balloonScale = baseScale * wordLengthScale;
 
@@ -715,69 +725,6 @@ class GameOverScene extends Phaser.Scene {
         const textBoxX = width * 0.15;
         const textBoxY = height * 0.35;
 
-        // White background for text box with border
-        const textBoxBg = this.add.rectangle(textBoxX, textBoxY, textBoxWidth, textBoxHeight, 0xffffff)
-            .setOrigin(0)
-            .setStrokeStyle(2, 0x000000);
-
-        // Create text content directly without container
-        let yPos = textBoxY + 20;
-        let xPos = textBoxX + 40;
-        let currentLineWidth = 0;
-        const availableWidth = textBoxWidth - 80; // 40px padding on each side
-
-        // Filter only the rounds with mistakes (where clicked is not correct)
-        const mistakeRounds = this.wordSets.filter(set => 
-            set.clicked !== set.correct
-        );
-
-        console.log('Processing mistake rounds:', mistakeRounds.length);
-        
-        mistakeRounds.forEach((set) => {
-            // Calculate available width for words
-            let xPos = textBoxX + 40;
-            let currentLineWidth = 0;
-
-            // Render words with proper wrapping
-            set.allWords.forEach((word, wordIndex) => {
-                let color = '#000000'; // Default black
-                if (word === set.clicked) color = '#ff0000'; // Red for clicked wrong word
-                if (word === set.correct) color = '#00ff00'; // Green for correct word
-
-                const wordText = this.add.text(xPos, yPos, word, {
-                    fontSize: '22px',
-                    fontFamily: 'Arial',
-                    fill: color,
-                    fontWeight: 'bold'
-                });
-
-                // Check if we need to wrap to next line
-                if (currentLineWidth + wordText.width + 30 > availableWidth && wordIndex > 0) {
-                    yPos += 35; // Move to next line
-                    xPos = textBoxX + 40; // Reset x position
-                    currentLineWidth = 0; // Reset line width
-                    wordText.setPosition(xPos, yPos);
-                }
-
-                currentLineWidth += wordText.width + 30;
-                xPos += wordText.width + 30;
-            });
-            
-            yPos += 45; // Space between sets
-        });
-
-        // If no mistakes were made, show a congratulatory message
-        if (mistakeRounds.length === 0) {
-            this.add.text(textBoxX + textBoxWidth/2, textBoxY + textBoxHeight/2, 
-                'Perfect Score!\nNo mistakes made!', {
-                fontSize: '32px',
-                fontFamily: 'Arial',
-                fill: '#00aa00',
-                align: 'center',
-                fontWeight: 'bold'
-            }).setOrigin(0.5);
-        }
-
         // Create mask for scrolling
         const maskGraphics = this.add.graphics()
             .fillStyle(0xffffff)
@@ -786,6 +733,81 @@ class GameOverScene extends Phaser.Scene {
         // Create a container for masking
         const maskContainer = this.add.container(0, 0);
         maskContainer.setMask(new Phaser.Display.Masks.GeometryMask(this, maskGraphics));
+
+        // Initialize position variables
+        let yPos = textBoxY + 20;
+        const availableWidth = textBoxWidth - 80;
+
+        // Filter only the rounds with mistakes (where clicked is not correct)
+        const mistakeRounds = this.wordSets.filter(set => 
+            set.clicked !== set.correct
+        );
+
+        console.log('Processing mistake rounds:', mistakeRounds.length);
+        
+        // Create text content
+        mistakeRounds.forEach((set) => {
+            let xPos = textBoxX + 40;
+            let currentLineWidth = 0;
+
+            set.allWords.forEach((word, wordIndex) => {
+                let style = {
+                    fontSize: '22px',
+                    fontFamily: 'Arial',
+                    fill: '#4CAF50' // Softer green for all correct words
+                };
+
+                if (word === set.correct) {
+                    style.fill = '#ff0000'; // Red for the incorrect word
+                }
+
+                const wordText = this.add.text(xPos, yPos, word, style);
+                maskContainer.add(wordText);
+
+                if (word === set.clicked) {
+                    const underline = this.add.rectangle(
+                        xPos,
+                        yPos + wordText.height,
+                        wordText.width,
+                        2,
+                        parseInt(style.fill.replace('#', '0x'))
+                    );
+                    underline.setOrigin(0, 0);
+                    maskContainer.add(underline);
+                }
+
+                if (currentLineWidth + wordText.width + 30 > availableWidth && wordIndex > 0) {
+                    yPos += 35;
+                    xPos = textBoxX + 40;
+                    currentLineWidth = 0;
+                    wordText.setPosition(xPos, yPos);
+                    if (word === set.clicked) {
+                        const lastUnderline = maskContainer.list[maskContainer.list.length - 1];
+                        if (lastUnderline instanceof Phaser.GameObjects.Rectangle) {
+                            lastUnderline.setPosition(xPos, yPos + wordText.height);
+                        }
+                    }
+                }
+
+                currentLineWidth += wordText.width + 30;
+                xPos += wordText.width + 30;
+            });
+            
+            yPos += 45;
+        });
+
+        // If no mistakes were made, show a congratulatory message
+        if (mistakeRounds.length === 0) {
+            const perfectText = this.add.text(textBoxX + textBoxWidth/2, textBoxY + textBoxHeight/2, 
+                'Perfect Score!\nNo mistakes made!', {
+                fontSize: '32px',
+                fontFamily: 'Arial',
+                fill: '#00aa00',
+                align: 'center',
+                fontWeight: 'bold'
+            }).setOrigin(0.5);
+            maskContainer.add(perfectText);
+        }
 
         // Add all text objects to the mask container
         this.children.list
@@ -940,9 +962,17 @@ class WinScene extends Phaser.Scene {
             .setStrokeStyle(2, 0x000000)
             .setAlpha(0.9); // Make it slightly transparent
 
-        // Create text content
+        // Create mask for scrolling
+        const maskGraphics = this.add.graphics()
+            .fillStyle(0xffffff)
+            .fillRect(textBoxX, textBoxY, textBoxWidth - 20, textBoxHeight);
+
+        // Create a container for masking
+        const maskContainer = this.add.container(0, 0);
+        maskContainer.setMask(new Phaser.Display.Masks.GeometryMask(this, maskGraphics));
+
+        // Initialize position variables
         let yPos = textBoxY + 20;
-        let xPos = textBoxX + 40;
         const availableWidth = textBoxWidth - 80;
 
         // Filter only the rounds with mistakes
@@ -963,32 +993,55 @@ class WinScene extends Phaser.Scene {
                 let currentLineWidth = 0;
 
                 set.allWords.forEach((word, wordIndex) => {
-                    let color = '#000000';
-                    if (word === set.clicked) color = '#ff0000';
-                    if (word === set.correct) color = '#4CAF50';
-
-                    const wordText = this.add.text(xPos, yPos, word, {
+                    let style = {
                         fontSize: '22px',
                         fontFamily: 'Arial',
-                        fill: color,
-                        fontWeight: 'bold'
-                    });
+                        fill: '#4CAF50', // Softer green for all correct words
+                        textDecoration: word === set.clicked ? 'underline' : '' // Underline clicked word
+                    };
+
+                    if (word === set.correct) {
+                        style.fill = '#ff0000'; // Red for the incorrect word
+                    }
+
+                    const wordText = this.add.text(xPos, yPos, word, style);
+
+                    if (word === set.clicked) {
+                        // Add underline as a rectangle
+                        const underline = this.add.rectangle(
+                            xPos,
+                            yPos + wordText.height,
+                            wordText.width,
+                            2,
+                            parseInt(style.fill.replace('#', '0x'))
+                        );
+                        underline.setOrigin(0, 0);
+                        maskContainer.add(underline);
+                    }
 
                     if (currentLineWidth + wordText.width + 30 > availableWidth && wordIndex > 0) {
                         yPos += 35;
                         xPos = textBoxX + 40;
                         currentLineWidth = 0;
                         wordText.setPosition(xPos, yPos);
+                        if (word === set.clicked) {
+                            // Update underline position if word wraps
+                            const lastUnderline = maskContainer.list[maskContainer.list.length - 1];
+                            if (lastUnderline instanceof Phaser.GameObjects.Rectangle) {
+                                lastUnderline.setPosition(xPos, yPos + wordText.height);
+                            }
+                        }
                     }
 
                     currentLineWidth += wordText.width + 30;
                     xPos += wordText.width + 30;
+                    maskContainer.add(wordText);
                 });
                 
                 yPos += 45;
             });
         } else {
-            this.add.text(textBoxX + textBoxWidth/2, textBoxY + textBoxHeight/2, 
+            const perfectText = this.add.text(textBoxX + textBoxWidth/2, textBoxY + textBoxHeight/2, 
                 'Перфектен резултат!\nНяма грешки!', {
                 fontSize: '32px',
                 fontFamily: 'Arial',
@@ -996,16 +1049,8 @@ class WinScene extends Phaser.Scene {
                 align: 'center',
                 fontWeight: 'bold'
             }).setOrigin(0.5);
+            maskContainer.add(perfectText);
         }
-
-        // Create mask for scrolling
-        const maskGraphics = this.add.graphics()
-            .fillStyle(0xffffff)
-            .fillRect(textBoxX, textBoxY, textBoxWidth - 20, textBoxHeight);
-
-        // Create a container for masking
-        const maskContainer = this.add.container(0, 0);
-        maskContainer.setMask(new Phaser.Display.Masks.GeometryMask(this, maskGraphics));
 
         // Add all text objects to the mask container
         this.children.list
@@ -1015,6 +1060,20 @@ class WinScene extends Phaser.Scene {
                     maskContainer.add(text);
                 }
             });
+
+        // Add underline for clicked word after creating the mask container
+        if (this._clickedWordData) {
+            const { text, x, y } = this._clickedWordData;
+            const underline = this.add.graphics();
+            underline.lineStyle(2, parseInt(text.style.color.replace('#', '0x')), 1);
+            underline.beginPath();
+            underline.moveTo(x, y + text.height + 2);
+            underline.lineTo(x + text.width, y + text.height + 2);
+            underline.closePath();
+            underline.strokePath();
+            maskContainer.add(underline);
+            delete this._clickedWordData;
+        }
 
         // Scrollbar background
         const scrollBarBg = this.add.rectangle(
