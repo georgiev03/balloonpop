@@ -111,15 +111,42 @@ class MainMenuScene extends Phaser.Scene {
         
         allTextElements.push(titleText);
 
-        // Add pulsing animation to the glow
-        this.tweens.add({
-            targets: allTextElements.slice(0, -1),
-            alpha: '-=0.2',  // Match the button's pulse intensity
-            yoyo: true,
-            duration: 2000,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
+        // Add creator credit with glow effect
+        const creatorGlowColors = [
+            { color: '#4df3ff', alpha: 0.4, thickness: 16 },  // Outermost glow
+            { color: '#4df3ff', alpha: 0.5, thickness: 12 },  // Outer glow
+            { color: '#4df3ff', alpha: 0.6, thickness: 8 },   // Inner glow
+            { color: '#ffffff', alpha: 0.8, thickness: 4 }    // White core
+        ];
+
+        // Add glow layers for creator text
+        creatorGlowColors.forEach(({ color, alpha, thickness }) => {
+            const glowText = this.add.text(width / 2, height * 0.2 + titleText.height + 5, 'от Георги Стаматов', {
+                fontSize: Math.min(width * 0.03, 32) + 'px',
+                fontFamily: 'Arial Black',
+                fontWeight: 'bold',
+                fill: 'transparent',
+                stroke: color,
+                strokeThickness: thickness
+            }).setOrigin(0.5).setAlpha(alpha);
+            
+            allTextElements.push(glowText);
         });
+
+        // Add solid creator text
+        const creatorText = this.add.text(width / 2, height * 0.2 + titleText.height + 5, 'от Георги Стаматов', {
+            fontSize: Math.min(width * 0.03, 32) + 'px',
+            fontFamily: 'Arial Black',
+            fontWeight: 'bold',
+            fill: '#f0f0f0',
+            stroke: '#4df3ff',
+            strokeThickness: 1
+        }).setOrigin(0.5);
+
+        // Add shadow to creator text
+        creatorText.setShadow(1, 1, '#000000', 2, true, true);
+        
+        allTextElements.push(creatorText);
 
         // Create a container for the button
         const buttonContainer = this.add.container(width / 2, height * 0.6);
@@ -164,25 +191,8 @@ class MainMenuScene extends Phaser.Scene {
         buttonContainer.add(buttonText);
         buttonText.setInteractive();
 
-        // Add stronger pulsing animation to the button glow
-        this.tweens.add({
-            targets: buttonContainer.list.slice(0, -1),
-            alpha: '-=0.2',  // Increased alpha change for more noticeable pulse
-            yoyo: true,
-            duration: 2000,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
         // Enhanced button hover effects
         buttonText.on('pointerover', () => {
-            // Increase glow intensity on hover
-            buttonContainer.list.forEach((glow, index) => {
-                if (index < buttonContainer.list.length - 1) {
-                    const originalAlpha = buttonGlowColors[index].alpha;
-                    glow.setAlpha(originalAlpha + 0.3);  // Increased glow intensity on hover
-                }
-            });
             this.tweens.add({
                 targets: buttonContainer,
                 scaleX: 1.1,
@@ -192,13 +202,6 @@ class MainMenuScene extends Phaser.Scene {
         });
 
         buttonText.on('pointerout', () => {
-            // Reset glow intensity
-            buttonContainer.list.forEach((glow, index) => {
-                if (index < buttonContainer.list.length - 1) {
-                    const originalAlpha = buttonGlowColors[index].alpha;
-                    glow.setAlpha(originalAlpha);
-                }
-            });
             this.tweens.add({
                 targets: buttonContainer,
                 scaleX: 1,
@@ -217,19 +220,46 @@ class MainMenuScene extends Phaser.Scene {
         this.addGreenParticles();
 
         // Add entrance animations
-        this.tweens.add({
-            targets: allTextElements,
-            y: height * 0.2,
-            duration: 1500,
-            ease: 'Bounce'
+        // Separate title and creator text elements
+        const titleElements = allTextElements.slice(0, 5); // Title and its glow layers
+        const creatorElements = allTextElements.slice(5);   // Creator text and its glow layers
+
+        // Set initial positions
+        titleElements.forEach(text => {
+            text.y = height + 100; // Start from below the screen
+        });
+        
+        creatorElements.forEach(text => {
+            text.y = height + 150; // Start from below the screen, slightly lower
         });
 
+        // Animate title elements
+        this.tweens.add({
+            targets: titleElements,
+            y: height * 0.2, // Move to title position
+            duration: 1500,
+            ease: 'Back.easeOut',
+            delay: 200
+        });
+
+        // Animate creator elements
+        this.tweens.add({
+            targets: creatorElements,
+            y: height * 0.2 + titleText.height + 5, // Move to position below title
+            duration: 1500,
+            ease: 'Back.easeOut',
+            delay: 400 // Slightly longer delay
+        });
+
+        // Start button from below screen
+        buttonContainer.y = height + 100;
+        
         this.tweens.add({
             targets: buttonContainer,
             y: height * 0.6,
             duration: 1000,
-            ease: 'Bounce',
-            delay: 200
+            ease: 'Back.easeOut',
+            delay: 1000 // Slightly longer delay for the button
         });
     }
 
@@ -406,8 +436,8 @@ class GameScene extends Phaser.Scene {
         console.log(`Round ${this.round}, Time to top: ${currentTime} seconds`);
 
         // Calculate balloon width and total width
-        const balloonBaseWidth = Math.min(width, height) * 0.095; // Increased from 0.084
-        const balloonWidth = balloonBaseWidth * (1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.095 : 0)); // Increased from 0.084
+        const balloonBaseWidth = Math.min(width, height) * (isMobile ? 0.115 : 0.095); // Increased from 0.095 for mobile
+        const balloonWidth = balloonBaseWidth * (1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.095 : 0));
         
         // Calculate base spacing and adjust it based on word length
         const baseSpacing = width * 0.14; // Increased from 0.13
@@ -420,8 +450,8 @@ class GameScene extends Phaser.Scene {
         const totalWidth = totalBalloonsWidth + totalSpacing;
 
         // Position balloons more to the right
-        const minStartX = width * 0.35;
-        const availableWidth = width * 0.6;
+        const minStartX = width * (isMobile ? 0.3 : 0.35); // Adjusted for mobile
+        const availableWidth = width * (isMobile ? 0.65 : 0.6); // Adjusted for mobile
         
         // Center the balloons in the available space
         const startX = minStartX + (availableWidth - totalWidth) / 2 + (balloonWidth / 2);
@@ -443,9 +473,9 @@ class GameScene extends Phaser.Scene {
             // Use incorrect word for incorrect balloon, or take next word from shuffled array
             const word = isIncorrect ? incorrectWord : shuffledCorrectWords[i >= incorrectIndex ? i - 1 : i];
 
-            // Calculate scale based on longest word length - increased scaling
-            const baseScale = Math.min(width, height) * 0.0018; // Increased from 0.00152
-            const wordLengthScale = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.06 : 0); // Increased from 0.0525
+            // Calculate scale based on longest word length - increased scaling for mobile
+            const baseScale = Math.min(width, height) * (isMobile ? 0.0022 : 0.0018); // Increased from 0.0018 for mobile
+            const wordLengthScale = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.06 : 0);
             const balloonScale = baseScale * wordLengthScale;
 
             // Create balloon sprite with size relative to screen and longest word length
