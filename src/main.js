@@ -23,8 +23,7 @@ class BootScene extends Phaser.Scene {
         this.load.image('heart-empty', 'assets/brokenheart.png');
         
         // Load different background based on device
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        this.load.image('startscreen', isMobile ? 'assets/startscreenmobile.jpeg' : 'assets/startscreen2.jpg');
+        this.load.image('startscreen', 'assets/startscreen2.jpg');
         
         this.load.audio('pop', 'assets/pop.mp3');
         this.load.audio('success', 'assets/success.mp3');
