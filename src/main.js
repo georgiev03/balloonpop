@@ -101,7 +101,7 @@ class MainMenuScene extends Phaser.Scene {
             fontSize: Math.min(width * 0.08, 84) + 'px',
             fontFamily: 'Arial Black',
             fontWeight: 'bold',
-            fill: '#f0f0f0',  // Slightly darker shade of white
+            fill: '#fdfdfd',  // Slightly darker shade of white
             stroke: '#4df3ff',
             strokeThickness: 4
         }).setOrigin(0.5);
@@ -138,7 +138,7 @@ class MainMenuScene extends Phaser.Scene {
             fontSize: Math.min(width * 0.03, 32) + 'px',
             fontFamily: 'Arial Black',
             fontWeight: 'bold',
-            fill: '#f0f0f0',
+            fill: '#fdfdfd',
             stroke: '#4df3ff',
             strokeThickness: 1
         }).setOrigin(0.5);
@@ -179,7 +179,7 @@ class MainMenuScene extends Phaser.Scene {
             fontSize: Math.min(width * 0.06, 72) + 'px',
             fontFamily: 'Arial Black',
             fontWeight: 'bold',
-            fill: '#f0f0f0',  // Slightly darker shade of white
+            fill: '#fdfdfd',  // Slightly darker shade of white
             stroke: '#4df3ff',
             strokeThickness: 4,
             padding: { x: 8, y: 8 }
@@ -491,8 +491,8 @@ class GameScene extends Phaser.Scene {
             const actualBalloonHeight = balloon.height * balloonScale;
 
             // Calculate text size based on longest word length - adjusted for better readability
-            const baseFontSize = Math.min(width, height) * 0.029; // Increased from 0.026
-            const fontScale = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * 0.035 : 0); // Increased from 0.0315
+            const baseFontSize = Math.min(width, height) * (isMobile ? 0.035 : 0.029); // Increased from 0.029 for mobile
+            const fontScale = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * (isMobile ? 0.04 : 0.035) : 0); // Increased scaling for mobile
             const fontSize = Math.floor(baseFontSize * fontScale);
 
             // Add word text with improved styling
@@ -503,8 +503,8 @@ class GameScene extends Phaser.Scene {
                 fill: '#000000',
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 padding: { 
-                    x: 0,
-                    y: fontSize * 0.45 // Increased from 0.4
+                    x: isMobile ? fontSize * 0.3 : 0, // Added horizontal padding for mobile
+                    y: fontSize * (isMobile ? 0.5 : 0.45) // Increased vertical padding for mobile
                 },
                 fixedWidth: actualBalloonWidth,
                 align: 'center'
