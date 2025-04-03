@@ -491,7 +491,7 @@ class GameScene extends Phaser.Scene {
             const actualBalloonHeight = balloon.height * balloonScale;
 
             // Calculate text size based on longest word length - adjusted for better readability
-            const baseFontSize = Math.min(width, height) * (isMobile ? 0.034 : 0.029); // Increased from 0.029 for mobile
+            const baseFontSize = Math.min(width, height) * (isMobile ? 0.032 : 0.029); // Increased from 0.029 for mobile
             const fontScale = 1 + (maxWordLength > 5 ? (maxWordLength - 5) * (isMobile ? 0.04 : 0.035) : 0); // Increased scaling for mobile
             const fontSize = Math.floor(baseFontSize * fontScale);
 
