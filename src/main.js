@@ -84,7 +84,7 @@ class MainMenuScene extends Phaser.Scene {
 
         // Add glow layers from outside in
         glowColors.forEach(({ color, alpha, thickness }) => {
-            const glowText = this.add.text(width / 2, height * 0.2, 'Граматико', {
+            const glowText = this.add.text(width / 2, height * 0.2, 'Граматичко', {
                 fontSize: Math.min(width * 0.08, 84) + 'px',
                 fontFamily: 'Arial Black',
                 fontWeight: 'bold',
@@ -97,7 +97,7 @@ class MainMenuScene extends Phaser.Scene {
         });
 
         // Add solid text with neon effect
-        const titleText = this.add.text(width / 2, height * 0.2, 'Граматико', {
+        const titleText = this.add.text(width / 2, height * 0.2, 'Граматичко', {
             fontSize: Math.min(width * 0.08, 84) + 'px',
             fontFamily: 'Arial Black',
             fontWeight: 'bold',
