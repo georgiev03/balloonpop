@@ -158,8 +158,8 @@ class MainMenuScene extends Phaser.Scene {
             { key: 'hard', text: 'ТРУДНО', image: 'balloon', timeRange: { min: 15, max: 10 } }
         ];
 
-        const buttonSpacing = width * 0.2; // Horizontal spacing between buttons
-        const startX = width * 0.35; // Start from 25% of screen width
+        const buttonSpacing = width * 0.17; // Horizontal spacing between buttons
+        const startX = width * 0.30; // Start from 25% of screen width
         const buttonY = height * 0.6; // Fixed Y position for all buttons
 
         // Create array to store all button containers
