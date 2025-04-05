@@ -18,6 +18,8 @@ class BootScene extends Phaser.Scene {
 
         // Load game assets
         this.load.image('balloon', 'assets/balloon.png');
+        this.load.image('easy', 'assets/easy.png');
+        this.load.image('medium', 'assets/medium.png');
         this.load.image('arrow', 'assets/arrow.svg');
         this.load.image('heart', 'assets/heart.png');
         this.load.image('heart-empty', 'assets/brokenheart.png');
@@ -57,6 +59,7 @@ class BootScene extends Phaser.Scene {
 class MainMenuScene extends Phaser.Scene {
     constructor() {
         super({ key: 'MainMenuScene' });
+        this.selectedDifficulty = null;
     }
 
     create() {
@@ -148,72 +151,91 @@ class MainMenuScene extends Phaser.Scene {
         
         allTextElements.push(creatorText);
 
-        // Create a container for the button
-        const buttonContainer = this.add.container(width / 2, height * 0.6);
-
-        // Add multiple glow layers for button
-        const buttonGlowColors = [
-            { color: '#4df3ff', alpha: 0.4, thickness: 32 },  // Outermost glow (increased thickness)
-            { color: '#4df3ff', alpha: 0.6, thickness: 24 },  // Outer glow
-            { color: '#4df3ff', alpha: 0.8, thickness: 16 },  // Inner glow
-            { color: '#ffffff', alpha: 0.9, thickness: 12 }   // White core
+        // Create difficulty selection buttons
+        const difficulties = [
+            { key: 'easy', text: 'ЛЕСНО', image: 'easy', timeRange: { min: 23, max: 19 } },
+            { key: 'medium', text: 'СРЕДНО', image: 'medium', timeRange: { min: 19, max: 14 } },
+            { key: 'hard', text: 'ТРУДНО', image: 'balloon', timeRange: { min: 15, max: 10 } }
         ];
 
-        // Add glow layers from outside in
-        buttonGlowColors.forEach(({ color, alpha, thickness }) => {
-            const buttonGlow = this.add.text(0, 0, 'СТАРТ', {
-                fontSize: Math.min(width * 0.06, 72) + 'px',
+        const buttonSpacing = width * 0.15; // Horizontal spacing between buttons
+        const startX = width * 0.35; // Start from 25% of screen width
+        const buttonY = height * 0.6; // Fixed Y position for all buttons
+
+        // Create array to store all button containers
+        const buttonContainers = [];
+
+        difficulties.forEach((difficulty, index) => {
+            const buttonX = startX + (index * buttonSpacing);
+            
+            // Create button container
+            const buttonContainer = this.add.container(buttonX, buttonY);
+            buttonContainers.push(buttonContainer);
+            
+            // Add difficulty image
+            const balloonImage = this.add.image(0, 0, difficulty.image)
+                .setScale(0.7)
+                .setOrigin(0.5); // Center the balloon origin
+            buttonContainer.add(balloonImage);
+
+            // Add text centered below balloon with more space
+            const buttonText = this.add.text(0, balloonImage.height * 0.7, difficulty.text, {
+                fontSize: Math.min(width * 0.04, 48) + 'px',
                 fontFamily: 'Arial Black',
                 fontWeight: 'bold',
-                fill: 'transparent',
-                stroke: color,
-                strokeThickness: thickness,
-                padding: { x: 8, y: 8 }
-            }).setOrigin(0.5).setAlpha(alpha);
+                fill: '#fdfdfd',
+                stroke: '#4df3ff',
+                strokeThickness: 4
+            }).setOrigin(0.5); // Center the text
+            buttonContainer.add(buttonText);
+
+            // Make interactive
+            buttonContainer.setInteractive(new Phaser.Geom.Rectangle(
+                -balloonImage.width * 0.5,
+                -balloonImage.height * 0.5,
+                balloonImage.width,
+                balloonImage.height
+            ), Phaser.Geom.Rectangle.Contains);
+
+            // Add hover effect
+            buttonContainer.on('pointerover', () => {
+                this.tweens.add({
+                    targets: buttonContainer,
+                    scaleX: 1.1,
+                    scaleY: 1.1,
+                    duration: 100
+                });
+            });
+
+            buttonContainer.on('pointerout', () => {
+                this.tweens.add({
+                    targets: buttonContainer,
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 100
+                });
+            });
+
+            // Add click handler
+            buttonContainer.on('pointerdown', () => {
+                this.selectedDifficulty = difficulty;
+                this.scene.start('GameScene', { difficulty: difficulty });
+            });
+        });
+
+        // Add entrance animations for buttons
+        buttonContainers.forEach((container, index) => {
+            // Start from below the screen
+            container.y = height + 100;
             
-            buttonContainer.add(buttonGlow);
-        });
-
-        // Add solid text for button with stroke
-        const buttonText = this.add.text(0, 0, 'СТАРТ', {
-            fontSize: Math.min(width * 0.06, 72) + 'px',
-            fontFamily: 'Arial Black',
-            fontWeight: 'bold',
-            fill: '#fdfdfd',  // Slightly darker shade of white
-            stroke: '#4df3ff',
-            strokeThickness: 4,
-            padding: { x: 8, y: 8 }
-        }).setOrigin(0.5);
-
-        // Add shadow to the button text
-        buttonText.setShadow(2, 2, '#000000', 2, true, true);
-        
-        buttonContainer.add(buttonText);
-        buttonText.setInteractive();
-
-        // Enhanced button hover effects
-        buttonText.on('pointerover', () => {
+            // Animate to final position with delay based on index
             this.tweens.add({
-                targets: buttonContainer,
-                scaleX: 1.1,
-                scaleY: 1.1,
-                duration: 100
+                targets: container,
+                y: buttonY,
+                duration: 1500,
+                ease: 'Back.easeOut',
+                delay: 600 + (index * 200) // Stagger the animations
             });
-        });
-
-        buttonText.on('pointerout', () => {
-            this.tweens.add({
-                targets: buttonContainer,
-                scaleX: 1,
-                scaleY: 1,
-                duration: 100
-            });
-        });
-
-        // Start game on click
-        buttonText.on('pointerdown', () => {
-            // Start the game scene
-            this.scene.start('GameScene');
         });
 
         // Add green particle effects on the sides
@@ -248,18 +270,7 @@ class MainMenuScene extends Phaser.Scene {
             y: height * 0.2 + titleText.height + 5, // Move to position below title
             duration: 1500,
             ease: 'Back.easeOut',
-            delay: 400 // Slightly longer delay
-        });
-
-        // Start button from below screen
-        buttonContainer.y = height + 100;
-        
-        this.tweens.add({
-            targets: buttonContainer,
-            y: height * 0.6,
-            duration: 1000,
-            ease: 'Back.easeOut',
-            delay: 1000 // Slightly longer delay for the button
+            delay: 400
         });
     }
 
@@ -284,20 +295,38 @@ class MainMenuScene extends Phaser.Scene {
 class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
-        this.resetGame();
+        this.balloons = [];
+        this.lives = 3;
+        this.score = 0;
+        this.spawnTimer = null;
+        this.difficulty = null;
+        this.round = 1;
+        this.wordSets = [];
+        this.mistakeWords = [];
+        this.currentWordSet = null;
+        this.isLastRound = false;
+    }
+
+    init(data) {
+        this.difficulty = data.difficulty || { timeRange: { min: 15, max: 10 } };
+        this.baseTime = this.difficulty.timeRange.min;
+        this.minTime = this.difficulty.timeRange.max;
     }
 
     resetGame() {
-        this.mistakeWords = [];
-        this.wordSets = [];
-        this.currentWordSet = null;
-        this.round = 1;
-        this.lives = 10;
         this.balloons = [];
-        this.baseTime = 14;
-        this.minTime = 8;
-        // Reset available words to null so we reload them in create()
-        this.availableWords = null;
+        this.lives = 10;
+        this.score = 0;
+        this.round = 1;
+        this.wordSets = [];
+        this.mistakeWords = [];
+        this.currentWordSet = null;
+        this.isLastRound = false;
+        this.clearBalloons();
+        if (this.spawnTimer) {
+            this.spawnTimer.destroy();
+        }
+        this.startBalloonSpawning();
     }
 
     create() {
@@ -314,7 +343,7 @@ class GameScene extends Phaser.Scene {
         this.addUI();
         console.log('UI added');
 
-        // Start balloon spawning
+        // Start balloon spawning with difficulty settings
         this.startBalloonSpawning();
         console.log('Balloon spawning started');
 
@@ -364,25 +393,19 @@ class GameScene extends Phaser.Scene {
     }
 
     startBalloonSpawning() {
-        // Initial spawn
-        this.spawnBalloons();
         this.createSpawnTimer();
     }
 
     createSpawnTimer() {
-        // Clear existing timer if it exists
+        // Clear any existing timer
         if (this.spawnTimer) {
-            this.spawnTimer.remove();
+            this.spawnTimer.destroy();
         }
 
-        // Create new timer as backup in case something goes wrong
+        // Create a new timer with difficulty-based timing
         this.spawnTimer = this.time.addEvent({
-            delay: 10000,
-            callback: () => {
-                if (this.balloons.length === 0) {
-                    this.spawnBalloons();
-                }
-            },
+            delay: 1000, // Spawn a new balloon every 2 seconds
+            callback: this.spawnBalloons,
             callbackScope: this,
             loop: true
         });
@@ -392,17 +415,17 @@ class GameScene extends Phaser.Scene {
         console.log('Spawning balloons...');
         if (this.lives <= 0) return;
 
-        // Check if we've used all word sets
-        if (this.availableWords.length === 0) {
-            this.scene.start('WinScene', { 
-                rounds: this.round,
-                wordSets: this.wordSets
-            });
+        // Only spawn new balloons if there are no active balloons
+        if (this.balloons.length > 0) {
             return;
         }
 
-        // Clear any existing balloons first
-        this.clearBalloons();
+        // Check if we've used all word sets
+        if (this.availableWords.length === 0) {
+            // Don't start win scene immediately, let the last round play out
+            this.isLastRound = true;
+            return;
+        }
 
         const { width, height } = this.scale;
 
@@ -549,7 +572,17 @@ class GameScene extends Phaser.Scene {
                         this.roundText.setText('Рунд: ' + this.round);
                         
                         this.loseLife();
-                        // Spawn new balloons immediately
+
+                        // Check if this was the last round
+                        if (this.isLastRound) {
+                            this.scene.start('WinScene', { 
+                                rounds: this.round,
+                                wordSets: this.wordSets
+                            });
+                            return;
+                        }
+
+                        // Spawn new balloons immediately if not the last round
                         this.time.delayedCall(100, () => {
                             this.spawnBalloons();
                         });
@@ -621,6 +654,15 @@ class GameScene extends Phaser.Scene {
             // Clear the existing spawn timer
             if (this.spawnTimer) {
                 this.spawnTimer.remove();
+            }
+
+            // Check if this was the last round
+            if (this.availableWords.length === 0) {
+                this.scene.start('WinScene', { 
+                    rounds: this.round,
+                    wordSets: this.wordSets
+                });
+                return;
             }
 
             // Quick spawn after shooting (1 second)
