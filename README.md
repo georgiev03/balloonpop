@@ -1,8 +1,8 @@
-# Граматико (Gramatiko)
+# Граматичко (Gramatichko)
 
 An educational game for learning Bulgarian word spelling. Players need to identify the incorrectly spelled word among a set of words.
 
-🎮 **[Play the game now](https://gramatiko.netlify.app)**
+🎮 **[Play the game now](https://gramatichko.netlify.app)**
 
 ## Features
 
