@@ -7,7 +7,8 @@ An educational game for learning Bulgarian word spelling. Players need to identi
 ## Features
 
 - Educational gameplay focused on Bulgarian spelling
-- Adaptive difficulty with increasing speed each round
+- Three difficulty levels (Easy, Medium, Hard)
+- Adaptive difficulty with increasing speed every 3 rounds
 - Mobile-optimized touch controls and responsive design
 - Visual and audio feedback for correct/incorrect answers
 - Lives system with 10 hearts
@@ -19,12 +20,16 @@ An educational game for learning Bulgarian word spelling. Players need to identi
 
 ## How to Play
 
-1. Click/tap the balloon containing the incorrectly spelled word
-2. You have 10 lives (hearts) to complete all word sets
-3. The game gets progressively faster as you advance
-4. Each round presents 4 words, with one being incorrect
-5. Green words in the feedback are correct, red words are incorrect
-6. Try to complete all word sets without losing your lives
+1. Select your preferred difficulty level:
+   - Easy: More time to think (17-13 seconds)
+   - Medium: Balanced challenge (15-10 seconds)
+   - Hard: Fast-paced gameplay (13-8 seconds)
+2. Click/tap the balloon containing the incorrectly spelled word
+3. You have 10 lives (hearts) to complete all word sets
+4. The game gets progressively faster every 3 rounds
+5. Each round presents 4 words, with one being incorrect
+6. Green words in the feedback are correct, red words are incorrect
+7. Try to complete all word sets without losing your lives
 
 ## Technical Details
 
@@ -36,7 +41,7 @@ An educational game for learning Bulgarian word spelling. Players need to identi
 
 ### Live Version
 
-The game is hosted and playable at: [https://gramatiko.netlify.app](https://gramatiko.netlify.app)
+The game is hosted and playable at: [https://gramatichko.netlify.app](https://gramatichko.netlify.app)
 
 ### Local Development
 
@@ -44,8 +49,8 @@ If you want to run the game locally:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/gramatiko.git
-cd gramatiko
+git clone https://github.com/georgiev03/balloonpop.git
+cd balloonpop
 ```
 
 2. Serve the files using a web server. You can use any of these methods:
