@@ -153,9 +153,9 @@ class MainMenuScene extends Phaser.Scene {
 
         // Create difficulty selection buttons
         const difficulties = [
-            { key: 'easy', text: 'ЛЕСНО', image: 'easy', timeRange: { min: 23, max: 19 } },
-            { key: 'medium', text: 'СРЕДНО', image: 'medium', timeRange: { min: 19, max: 14 } },
-            { key: 'hard', text: 'ТРУДНО', image: 'balloon', timeRange: { min: 15, max: 10 } }
+            { key: 'easy', text: 'ЛЕСНО', image: 'easy', timeRange: { min: 17, max: 13 } },
+            { key: 'medium', text: 'СРЕДНО', image: 'medium', timeRange: { min: 15, max: 10 } },
+            { key: 'hard', text: 'ТРУДНО', image: 'balloon', timeRange: { min: 13, max: 8 } }
         ];
 
         const buttonSpacing = width * 0.17; // Horizontal spacing between buttons
@@ -453,7 +453,7 @@ class GameScene extends Phaser.Scene {
         );
         
         // Calculate current time to reach top based on round
-        const timeReduction = Math.floor(this.round / 2) * 0.25;
+        const timeReduction = Math.floor(this.round / 3) * 0.25;
         const currentTime = Math.max(this.minTime, this.baseTime - timeReduction);
         
         console.log(`Round ${this.round}, Time to top: ${currentTime} seconds`);
