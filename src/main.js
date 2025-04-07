@@ -151,6 +151,187 @@ class MainMenuScene extends Phaser.Scene {
         
         allTextElements.push(creatorText);
 
+        // Add help button with permanent cyan glow effect
+        const helpButtonSize = Math.min(width * 0.05, 50);
+        const helpCircle = this.add.circle(width * 0.95, height * 0.1, helpButtonSize, 0x4df3ff, 0.2)
+            .setStrokeStyle(2, 0x4df3ff)
+            .setInteractive();
+
+        // Add main help button text
+        const helpButton = this.add.text(width * 0.95, height * 0.1, '?', {
+            fontSize: helpButtonSize * 1.2 + 'px',
+            fontFamily: 'Arial Black',
+            fontWeight: 'bold',
+            fill: '#ffffff'
+        }).setOrigin(0.5);
+
+        // Add subtle hover effect
+        helpCircle.on('pointerover', () => {
+            helpCircle.setFillStyle(0x4df3ff, 0.3);
+        });
+
+        helpCircle.on('pointerout', () => {
+            helpCircle.setFillStyle(0x4df3ff, 0.2);
+        });
+
+        // Create black overlay for the entire screen
+        const overlay = this.add.rectangle(0, 0, width, height, 0x000000, 0.7)
+            .setOrigin(0)
+            .setAlpha(0)
+            .setDepth(1)
+            .setInteractive();
+
+        // Create modal background with enhanced gradient effect
+        const modalBg = this.add.rectangle(0, 0, width * 0.5, height * 0.35, 0x000000, 0.95)
+            .setOrigin(0.5)
+            .setAlpha(1)
+            .setStrokeStyle(2, 0x4df3ff);
+
+        // Add glow effect to modal background
+        const modalGlow = this.add.rectangle(0, 0, width * 0.5 + 4, height * 0.35 + 4, 0x4df3ff, 0.2)
+            .setOrigin(0.5)
+            .setAlpha(0.5);
+
+        // Create modal container and position it in the center
+        const modalContainer = this.add.container(width/2, height * 0.45);
+        modalContainer.setAlpha(0);
+        modalContainer.setDepth(2);
+        modalContainer.add(modalGlow);
+        modalContainer.add(modalBg);
+
+        // Add modal text with clean styling
+        const modalText = this.add.text(0, -modalBg.height * 0.05, 'ИНФОРМАЦИЯ\n\nУцелете балона с грешната дума.\nИграта е от 200 тура,\nимате възможност за 10 несполучливи опита.', {
+            fontSize: Math.min(width * 0.025, 25) + 'px',
+            fontFamily: 'Arial Black',
+            fill: '#ffffff',
+            align: 'center',
+            lineSpacing: 15,
+            stroke: '#4df3ff',
+            strokeThickness: 0.5,
+            shadow: { color: '#4df3ff', blur: 6, offsetX: 0, offsetY: 0 }
+        }).setOrigin(0.5);
+
+        // Add close button with enhanced styling
+        const closeButton = this.add.container(0, modalBg.height * 0.5);
+        
+        const closeButtonBg = this.add.rectangle(0, 0, 140, 45, 0x000000, 1)
+            .setOrigin(0.5)
+            .setStrokeStyle(2, 0x4df3ff);
+        
+        // Add glow effect to close button
+        const closeButtonGlow = this.add.rectangle(0, 0, 144, 49, 0x4df3ff, 0.2)
+            .setOrigin(0.5)
+            .setAlpha(0.5);
+        
+        const closeButtonText = this.add.text(0, 0, 'Затвори', {
+            fontSize: Math.min(width * 0.022, 24) + 'px',
+            fontFamily: 'Arial Black',
+            fill: '#ffffff',
+            stroke: '#4df3ff',
+            strokeThickness: 1
+        }).setOrigin(0.5);
+
+        closeButton.add([closeButtonGlow, closeButtonBg, closeButtonText]);
+        closeButton.setInteractive(new Phaser.Geom.Rectangle(-70, -22.5, 140, 45), Phaser.Geom.Rectangle.Contains);
+
+        // Add hover effects for close button with enhanced animations
+        closeButton.on('pointerover', () => {
+            closeButtonBg.setFillStyle(0x4df3ff, 0.3);
+            closeButtonGlow.setAlpha(0.8);
+            this.tweens.add({
+                targets: closeButton,
+                scaleX: 1.1,
+                scaleY: 1.1,
+                duration: 200,
+                ease: 'Back.easeOut'
+            });
+        });
+
+        closeButton.on('pointerout', () => {
+            closeButtonBg.setFillStyle(0x000000, 1);
+            closeButtonGlow.setAlpha(0.5);
+            this.tweens.add({
+                targets: closeButton,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 200,
+                ease: 'Back.easeOut'
+            });
+        });
+
+        // Add elements to modal container in the correct order
+        modalContainer.add([modalText, closeButton]);
+
+        // Store references to difficulty button containers
+        const buttonContainers = [];
+
+        // Show modal with enhanced animation
+        helpCircle.on('pointerdown', () => {
+            modalContainer.setAlpha(0);
+            modalContainer.setScale(0.8);
+            overlay.setAlpha(0);
+            
+            // Disable all difficulty buttons
+            buttonContainers.forEach(container => {
+                container.removeInteractive();
+            });
+            
+            // Fade in overlay with blur effect
+            this.tweens.add({
+                targets: overlay,
+                alpha: 0.7,
+                duration: 300,
+                ease: 'Power2'
+            });
+            
+            // Pop in modal with bounce effect
+            this.tweens.add({
+                targets: modalContainer,
+                alpha: 1,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 400,
+                ease: 'Back.easeOut',
+                easeParams: [2.5]
+            });
+        });
+
+        // Hide modal with enhanced animation
+        closeButton.on('pointerdown', () => {
+            // Fade out overlay
+            this.tweens.add({
+                targets: overlay,
+                alpha: 0,
+                duration: 200,
+                ease: 'Power2'
+            });
+            
+            // Fade out and scale down modal
+            this.tweens.add({
+                targets: modalContainer,
+                alpha: 0,
+                scaleX: 0.8,
+                scaleY: 0.8,
+                duration: 300,
+                ease: 'Back.easeIn',
+                onComplete: () => {
+                    // Re-enable all difficulty buttons
+                    buttonContainers.forEach(container => {
+                        container.setInteractive(new Phaser.Geom.Rectangle(
+                            -container.first.width * 0.5,
+                            -container.first.height * 0.5,
+                            container.first.width,
+                            container.first.height
+                        ), Phaser.Geom.Rectangle.Contains);
+                    });
+                }
+            });
+        });
+
+        // Initially hide the modal and overlay
+        modalContainer.setAlpha(0);
+        overlay.setAlpha(0);
+
         // Create difficulty selection buttons
         const difficulties = [
             { key: 'easy', text: 'ЛЕСНО', image: 'easy', timeRange: { min: 17, max: 13 } },
@@ -161,9 +342,6 @@ class MainMenuScene extends Phaser.Scene {
         const buttonSpacing = width * 0.17; // Horizontal spacing between buttons
         const startX = width * 0.30; // Start from 25% of screen width
         const buttonY = height * 0.6; // Fixed Y position for all buttons
-
-        // Create array to store all button containers
-        const buttonContainers = [];
 
         difficulties.forEach((difficulty, index) => {
             const buttonX = startX + (index * buttonSpacing);
@@ -186,7 +364,7 @@ class MainMenuScene extends Phaser.Scene {
                 fill: '#fdfdfd',
                 stroke: '#4df3ff',
                 strokeThickness: 4
-            }).setOrigin(0.5); // Center the text
+            }).setOrigin(0.5);
             buttonContainer.add(buttonText);
 
             // Make interactive
