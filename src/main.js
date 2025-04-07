@@ -182,8 +182,8 @@ class MainMenuScene extends Phaser.Scene {
             .setInteractive();
 
         // Create modal background with enhanced gradient effect
-        const modalWidth = isMobile ? width * 0.75 : width * 0.5;
-        const modalHeight = isMobile ? height * 0.45 : height * 0.35; // Reduced height for mobile
+        const modalWidth = isMobile ? width * 0.65 : width * 0.5;
+        const modalHeight = isMobile ? height * 0.65 : height * 0.35; // Reduced height for mobile
         const modalBg = this.add.rectangle(0, 0, modalWidth, modalHeight, 0x000000, 0.95)
             .setOrigin(0.5)
             .setAlpha(1)
