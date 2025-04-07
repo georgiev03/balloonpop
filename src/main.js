@@ -153,12 +153,12 @@ class MainMenuScene extends Phaser.Scene {
 
         // Add help button with permanent cyan glow effect
         const helpButtonSize = Math.min(width * 0.05, 50);
-        const helpCircle = this.add.circle(width * 0.92, height * 0.12, helpButtonSize, 0x4df3ff, 0.2)
+        const helpCircle = this.add.circle(width * 0.92, height * 0.15, helpButtonSize, 0x4df3ff, 0.2)
             .setStrokeStyle(2, 0x4df3ff)
             .setInteractive();
 
         // Add main help button text
-        const helpButton = this.add.text(width * 0.92, height * 0.12, '?', {
+        const helpButton = this.add.text(width * 0.92, height * 0.15, '?', {
             fontSize: helpButtonSize * 1.2 + 'px',
             fontFamily: 'Arial Black',
             fontWeight: 'bold',
