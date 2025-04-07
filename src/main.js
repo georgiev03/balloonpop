@@ -153,12 +153,12 @@ class MainMenuScene extends Phaser.Scene {
 
         // Add help button with permanent cyan glow effect
         const helpButtonSize = Math.min(width * 0.05, 50);
-        const helpCircle = this.add.circle(width * 0.95, height * 0.1, helpButtonSize, 0x4df3ff, 0.2)
+        const helpCircle = this.add.circle(width * 0.92, height * 0.12, helpButtonSize, 0x4df3ff, 0.2)
             .setStrokeStyle(2, 0x4df3ff)
             .setInteractive();
 
         // Add main help button text
-        const helpButton = this.add.text(width * 0.95, height * 0.1, '?', {
+        const helpButton = this.add.text(width * 0.92, height * 0.12, '?', {
             fontSize: helpButtonSize * 1.2 + 'px',
             fontFamily: 'Arial Black',
             fontWeight: 'bold',
@@ -182,62 +182,56 @@ class MainMenuScene extends Phaser.Scene {
             .setInteractive();
 
         // Create modal background with enhanced gradient effect
-        const modalBg = this.add.rectangle(0, 0, width * 0.5, height * 0.35, 0x000000, 0.95)
+        const modalWidth = isMobile ? width * 0.85 : width * 0.5;
+        const modalHeight = isMobile ? height * 0.4 : height * 0.35;
+        const modalBg = this.add.rectangle(0, 0, modalWidth, modalHeight, 0x000000, 0.95)
             .setOrigin(0.5)
             .setAlpha(1)
             .setStrokeStyle(2, 0x4df3ff);
-
-        // Add glow effect to modal background
-        const modalGlow = this.add.rectangle(0, 0, width * 0.5 + 4, height * 0.35 + 4, 0x4df3ff, 0.2)
-            .setOrigin(0.5)
-            .setAlpha(0.5);
 
         // Create modal container and position it in the center
         const modalContainer = this.add.container(width/2, height * 0.45);
         modalContainer.setAlpha(0);
         modalContainer.setDepth(2);
-        modalContainer.add(modalGlow);
         modalContainer.add(modalBg);
 
-        // Add modal text with clean styling
+        // Add modal text with mobile-optimized styling
         const modalText = this.add.text(0, -modalBg.height * 0.05, 'ИНФОРМАЦИЯ\n\nУцелете балона с грешната дума.\nИграта е от 200 тура,\nимате възможност за 10 несполучливи опита.', {
-            fontSize: Math.min(width * 0.025, 25) + 'px',
+            fontSize: isMobile ? Math.min(width * 0.045, 32) + 'px' : Math.min(width * 0.025, 25) + 'px',
             fontFamily: 'Arial Black',
             fill: '#ffffff',
             align: 'center',
-            lineSpacing: 15,
-            stroke: '#4df3ff',
-            strokeThickness: 0.5,
-            shadow: { color: '#4df3ff', blur: 6, offsetX: 0, offsetY: 0 }
+            lineSpacing: isMobile ? 20 : 15,
+            padding: { x: 10, y: 10 }
         }).setOrigin(0.5);
 
-        // Add close button with enhanced styling
+        // Add close button with mobile-optimized styling
         const closeButton = this.add.container(0, modalBg.height * 0.5);
         
-        const closeButtonBg = this.add.rectangle(0, 0, 140, 45, 0x000000, 1)
+        const buttonWidth = isMobile ? 160 : 140;
+        const buttonHeight = isMobile ? 55 : 45;
+        
+        const closeButtonBg = this.add.rectangle(0, 0, buttonWidth, buttonHeight, 0x000000, 1)
             .setOrigin(0.5)
             .setStrokeStyle(2, 0x4df3ff);
-        
-        // Add glow effect to close button
-        const closeButtonGlow = this.add.rectangle(0, 0, 144, 49, 0x4df3ff, 0.2)
-            .setOrigin(0.5)
-            .setAlpha(0.5);
-        
+
         const closeButtonText = this.add.text(0, 0, 'Затвори', {
-            fontSize: Math.min(width * 0.022, 24) + 'px',
+            fontSize: isMobile ? Math.min(width * 0.04, 28) + 'px' : Math.min(width * 0.022, 24) + 'px',
             fontFamily: 'Arial Black',
-            fill: '#ffffff',
-            stroke: '#4df3ff',
-            strokeThickness: 1
+            fill: '#ffffff'
         }).setOrigin(0.5);
 
-        closeButton.add([closeButtonGlow, closeButtonBg, closeButtonText]);
-        closeButton.setInteractive(new Phaser.Geom.Rectangle(-70, -22.5, 140, 45), Phaser.Geom.Rectangle.Contains);
+        closeButton.add([closeButtonBg, closeButtonText]);
+        closeButton.setInteractive(new Phaser.Geom.Rectangle(
+            -buttonWidth/2, 
+            -buttonHeight/2, 
+            buttonWidth, 
+            buttonHeight
+        ), Phaser.Geom.Rectangle.Contains);
 
-        // Add hover effects for close button with enhanced animations
+        // Add hover effects
         closeButton.on('pointerover', () => {
             closeButtonBg.setFillStyle(0x4df3ff, 0.3);
-            closeButtonGlow.setAlpha(0.8);
             this.tweens.add({
                 targets: closeButton,
                 scaleX: 1.1,
@@ -249,7 +243,6 @@ class MainMenuScene extends Phaser.Scene {
 
         closeButton.on('pointerout', () => {
             closeButtonBg.setFillStyle(0x000000, 1);
-            closeButtonGlow.setAlpha(0.5);
             this.tweens.add({
                 targets: closeButton,
                 scaleX: 1,
@@ -259,7 +252,7 @@ class MainMenuScene extends Phaser.Scene {
             });
         });
 
-        // Add elements to modal container in the correct order
+        // Add elements to modal container
         modalContainer.add([modalText, closeButton]);
 
         // Store references to difficulty button containers
