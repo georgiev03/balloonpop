@@ -332,9 +332,9 @@ class MainMenuScene extends Phaser.Scene {
             { key: 'hard', text: 'ТРУДНО', image: 'balloon', timeRange: { min: 13, max: 8 } }
         ];
 
-        const buttonSpacing = width * 0.17; // Horizontal spacing between buttons
-        const startX = width * 0.30; // Start from 25% of screen width
-        const buttonY = height * 0.6; // Fixed Y position for all buttons
+        const buttonSpacing = isMobile ? width * 0.2 : width * 0.17; // Increased spacing for mobile
+        const startX = isMobile ? width * 0.25 : width * 0.30; // Adjusted starting position for mobile
+        const buttonY = isMobile ? height * 0.55 : height * 0.6; // Moved buttons slightly higher on mobile
 
         difficulties.forEach((difficulty, index) => {
             const buttonX = startX + (index * buttonSpacing);
