@@ -3,17 +3,43 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "main": "electron/main.js",
+  "description": "Balloon Pop Game for Students",
+  "author": "Zlati",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "electron:dev": "electron .",
+    "electron:build": "electron-builder --win dir",
+    "android:build": "npm run build && npx cap sync android && npx cap open android"
   },
   "dependencies": {
-    "phaser": "^3.70.0"
+    "phaser": "^3.70.0",
+    "@capacitor/core": "^5.5.1",
+    "@capacitor/android": "^5.5.1"
   },
   "devDependencies": {
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
     "gh-pages": "^6.1.1",
-    "vite": "^6.2.4"
+    "vite": "^6.2.4",
+    "@capacitor/cli": "^5.5.1"
+  },
+  "build": {
+    "appId": "com.balloonpop.app",
+    "win": {
+      "target": "dir",
+      "icon": "public/icon.ico"
+    },
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ]
   }
 }
