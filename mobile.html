@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="screen-orientation" content="landscape">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+    <title>Balloon Pop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            background: #000;
+        }
+        #game-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transform: rotate(90deg);
+            transform-origin: center;
+        }
+        canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            aspect-ratio: 16/9;
+            touch-action: none;
+        }
+        @media (orientation: landscape) and (max-aspect-ratio: 16/9) {
+            canvas {
+                width: 100% !important;
+                height: auto !important;
+            }
+        }
+        @media (orientation: landscape) and (min-aspect-ratio: 16/9) {
+            canvas {
+                width: auto !important;
+                height: 100% !important;
+            }
+        }
+        #rotation-prompt {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #rotation-prompt img {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 10px;
+        }
+        #install-prompt {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+            text-align: center;
+        }
+        @media (display-mode: standalone) {
+            #install-prompt {
+                display: none !important;
+            }
+        }
+    </style>
+  <script type="module" crossorigin src="/assets/mobile-9chSxeQl.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-B5Qt9EMX.js">
+</head>
+<body>
+    <div id="game-container"></div>
+    <div id="rotation-prompt">
+        <div>
+            <img src="assets/rotate-device.png" alt="Rotate device">
+            <p>Моля, завъртете устройството си в хоризонтално положение</p>
+        </div>
+    </div>
+    <div id="install-prompt">
+        <span>Инсталирайте играта за по-добро изживяване</span>
+        <button id="install-button">Инсталирай</button>
+    </div>
+
+</body>
+</html> 
